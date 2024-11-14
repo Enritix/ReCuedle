@@ -1,0 +1,32 @@
+#cookie-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
+}
+
+#cookie-consent-banner a {
+    color: #ff5500;
+    text-decoration: none;
+}
+
+#cookie-consent-banner button {
+    background-color: #ff5500;
+    border: none;
+    padding: 8px 15px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#cookie-consent-banner button:hover {
+    background-color: #e44c00;
+}

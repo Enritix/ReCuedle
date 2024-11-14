@@ -1,9 +1,9 @@
 window.addEventListener('load', loadState);
-
 window.addEventListener('load', init);
+
 const iframeElement = document.querySelector("iframe");
 let debounceTimeout;
-const btn = document.querySelector("button");
+const btn = document.getElementById('cue-btn');
 let svgIcon = document.querySelector(".search-box svg");
 let searchBox = document.querySelector(".search-box input");
 const guessBoxes = document.querySelectorAll(".guess-box");
@@ -35,7 +35,6 @@ function init() {
 }
 
 function playSong() {
-  const iframeElement = document.querySelector("iframe");
   const widget = SC.Widget(iframeElement);
 
   widget.setVolume(50);
