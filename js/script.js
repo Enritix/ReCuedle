@@ -508,6 +508,28 @@ btn.addEventListener("mouseup", () => {
   }
 });
 
+// btn.addEventListener("touchstart", () => {
+//   btn.classList.add("active");
+//   playSong();
+// });
+
+// btn.addEventListener("touchend", () => {
+//   btn.classList.remove("active");
+//   btn.classList.add("disabled-btn");
+//   btn.disabled = true;
+
+//   const iframeElement = document.querySelector("iframe");
+//   const widget = SC.Widget(iframeElement);
+  
+//   widget.pause();
+//   widget.seekTo(0);
+
+//   if (holdTimer) {
+//     clearInterval(holdTimer);
+//     holdTimer = null;
+//   }
+// });
+
 document.getElementById('main-title').addEventListener('click', function() {
   localStorage.clear();
 
