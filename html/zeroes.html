@@ -69,7 +69,7 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            if (!document.cookie.includes("cookies_accepted=true")) {
+            if (!document.cookie.includes("cookies_accepted_zeroes=true")) {
                 document.getElementById("cookie-consent-banner").style.display = "block";
             } else {
                 loadSoundCloudEmbed();
@@ -82,7 +82,7 @@
             document.getElementById("accept-cookies").addEventListener("click", function () {
                 console.log("Accept button clicked");
                 document.getElementById("cookie-consent-banner").style.display = "none";
-                document.cookie = "cookies_accepted=true; max-age=2592000; path=/;";
+                document.cookie = "cookies_accepted_zeroes=true; max-age=2592000; path=/;";
 
                 loadSoundCloudEmbed();
 
