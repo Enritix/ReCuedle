@@ -1,4 +1,4 @@
-window.addEventListener('load', loadState);
+//window.addEventListener('load', loadState);
 window.addEventListener('load', init);
 
 const iframeElement = document.querySelector("iframe");
@@ -116,47 +116,47 @@ function resetButton() {
   resetTimer();
 }
 
-function loadState() {
-  const savedCurrentGuess = localStorage.getItem('currentGuess');
-  const skippedGuesses = JSON.parse(localStorage.getItem('skippedGuesses')) || [];
-  const answeredGuesses = JSON.parse(localStorage.getItem('answeredGuesses')) || [];
+// function loadState() {
+//   const savedCurrentGuess = localStorage.getItem('currentGuess');
+//   const skippedGuesses = JSON.parse(localStorage.getItem('skippedGuesses')) || [];
+//   const answeredGuesses = JSON.parse(localStorage.getItem('answeredGuesses')) || [];
 
-  if (savedCurrentGuess) {
-    currentGuess = parseInt(savedCurrentGuess, 10);
+//   if (savedCurrentGuess) {
+//     currentGuess = parseInt(savedCurrentGuess, 10);
 
-    for (let i = 0; i < currentGuess; i++) {
-      if (skippedGuesses.some(item => item.index === i)) {
-        guessBoxes[i].innerHTML = "SKIP ❌";
-        guessBoxes[i].classList.remove("search-box");
-        guessBoxes[i].classList.add("guess-box");
-      } else {
-        const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
-        if (answered) {
-          guessBoxes[i].innerHTML = `${answered.guess} ${answered.correct ? '✅' : '❌'}`;
-          guessBoxes[i].classList.add(answered.correct ? 'correct' : 'incorrect');
-          guessBoxes[i].classList.remove("search-box");
-          guessBoxes[i].classList.add("guess-box");
-        } else {
-          guessBoxes[i].innerHTML = `
-            <input type="text" class="search-input" autocomplete="off" placeholder="Search for the song...">
-            <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 7v10l7-5zm9 10V7h-2v10z"></path>
-            </svg>
-            <div id="suggestions" class="suggestions-dropdown"></div>`;
+//     for (let i = 0; i < currentGuess; i++) {
+//       if (skippedGuesses.some(item => item.index === i)) {
+//         guessBoxes[i].innerHTML = "SKIP ❌";
+//         guessBoxes[i].classList.remove("search-box");
+//         guessBoxes[i].classList.add("guess-box");
+//       } else {
+//         const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
+//         if (answered) {
+//           guessBoxes[i].innerHTML = `${answered.guess} ${answered.correct ? '✅' : '❌'}`;
+//           guessBoxes[i].classList.add(answered.correct ? 'correct' : 'incorrect');
+//           guessBoxes[i].classList.remove("search-box");
+//           guessBoxes[i].classList.add("guess-box");
+//         } else {
+//           guessBoxes[i].innerHTML = `
+//             <input type="text" class="search-input" autocomplete="off" placeholder="Search for the song...">
+//             <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+//               <path d="M7 7v10l7-5zm9 10V7h-2v10z"></path>
+//             </svg>
+//             <div id="suggestions" class="suggestions-dropdown"></div>`;
 
-          guessBoxes[i].classList.remove("guess-box");
-          guessBoxes[i].classList.add("search-box");
+//           guessBoxes[i].classList.remove("guess-box");
+//           guessBoxes[i].classList.add("search-box");
 
-          const svgIcon = guessBoxes[i].querySelector("svg");
-          svgIcon.removeEventListener("click", skipGuess);
-          svgIcon.addEventListener("click", () => {
-            skipGuess();
-          });
-        }
-      }
-    }
-  }
-}
+//           const svgIcon = guessBoxes[i].querySelector("svg");
+//           svgIcon.removeEventListener("click", skipGuess);
+//           svgIcon.addEventListener("click", () => {
+//             skipGuess();
+//           });
+//         }
+//       }
+//     }
+//   }
+// }
 
 function saveState() {
   localStorage.setItem('currentGuess', currentGuess);
