@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReCuedle - 2020's Hits</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/category.css">
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
+    <script src="../js/script.js" defer></script>
+</head>
+
+<body>
+    <div class="background">
+        <main>
+            <h1 id="main-title"><span>R</span><span>e</span><span>C</span><span>u</span><span>e</span><span>d</span><span>l</span><span>e</span>
+            </h1>
+            <section class="song-container">
+                <div class="timer">
+                    <h2>2020's Hits</h2>
+                    <p>Time: 0:00</p>
+                </div>
+                <div class="cue">
+                    <button onclick="" onfocus="" title="Hold to play song">Cue</button>
+                    <a href="../index.html"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+                            text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+                            clip-rule="evenodd" viewBox="0 0 475 511.87">
+                            <path
+                                d="M12.07 402.3h450.86c6.64 0 12.07 5.5 12.07 12.07v85.43c0 6.57-5.5 12.07-12.07 12.07H12.07C5.5 511.87 0 506.44 0 499.8v-85.43c0-6.64 5.43-12.07 12.07-12.07zm10.76-60.79c-25.42 0-26.08-16.49-18.12-28.69l216.36-302.4C225.98 3.45 231.69-.02 237.4 0c5.71-.02 11.43 3.45 16.33 10.42l216.36 302.4c7.96 12.2 7.3 28.69-18.12 28.69H22.83z" />
+                        </svg></a>
+                </div>
+                <div class="guess-container">
+                    <div class="guess-box"></div>
+                    <div class="guess-box"></div>
+                    <div class="guess-box"></div>
+                    <div class="guess-box"></div>
+                    <div class="guess-box"></div>
+                    <div class="guess-box"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span id="close-popup" class="close-btn">&times;</span>
+            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/516180894&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false"></iframe>
+            <div
+                style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                <a href="https://soundcloud.com/postmalone" title="Post Malone" target="_blank"
+                    style="color: #cccccc; text-decoration: none;">Post Malone</a> · <a
+                    href="https://soundcloud.com/postmalone/sunflower-spider-man-into-the"
+                    title="Sunflower (Spider-Man: Into the Spider-Verse)" target="_blank"
+                    style="color: #cccccc; text-decoration: none;">Sunflower (Spider-Man: Into the Spider-Verse)</a>
+            </div>
+            <script src="https://w.soundcloud.com/player/api.js"></script>
+            <span class="song-info"></span>
+            <div class="popup-buttons">
+                <button id="tryAnotherDecade">Try Another Decade</button>
+                <button id="shareResults">Share Your Results</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
