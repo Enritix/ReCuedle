@@ -2,8 +2,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  width: max-content;
   margin: 0 auto;
+  justify-items: center;
 }
 
 .category {
@@ -17,8 +17,12 @@
   display: block;
   border-radius: 5px;
   box-shadow: rgba(100, 100, 111, 0.8) 0px 5px 29px 0px;
-  width: 225px;
-  height: 225px;
+  min-width: 60px;
+  width: auto; /* Responsive width */
+  max-width: 225px;
+  min-height: 60px;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 225px;
   transition: filter 0.15s ease;
 }
 
@@ -41,4 +45,20 @@
 
 .category:hover .overlay-text {
   opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .background {
+    width: 90%; /* Scale background down */
+    height: auto; /* Allow height to be flexible */
+  }
+
+  .categories-container {
+    margin: 20px;
+  }
+
+  .category img {
+    width: 100%;
+    height: auto;
+  }
 }
