@@ -8,6 +8,7 @@ let svgIcon = document.querySelector(".search-box svg");
 let searchBox = document.querySelector(".search-box input");
 const guessBoxes = document.querySelectorAll(".guess-box");
 let currentGuess = 0;
+let cueCounter = 0;
 
 let holdTimer = null;
 let elapsedTime = 0;
@@ -21,8 +22,8 @@ function init() {
 
   const widget = SC.Widget(iframeElement);
 
-  widget.bind(SC.Widget.Events.READY, function() {
-    widget.getCurrentSound(function(track) {
+  widget.bind(SC.Widget.Events.READY, function () {
+    widget.getCurrentSound(function (track) {
       if (track) {
         const songInfoElement = document.querySelector('.song-info');
         if (songInfoElement) {
@@ -41,7 +42,7 @@ function playSong() {
 
   widget.play();
 
-  widget.getDuration(function(duration) {
+  widget.getDuration(function (duration) {
     const maxDurationInSeconds = Math.floor(duration / 1000);
 
     holdTimer = setInterval(() => {
@@ -67,9 +68,9 @@ function closePopup() {
 
 document.getElementById('close-popup').addEventListener('click', closePopup);
 
-document.getElementById('popup').addEventListener('click', function(event) {
+document.getElementById('popup').addEventListener('click', function (event) {
   if (event.target === document.getElementById('popup')) {
-      closePopup();
+    closePopup();
   }
 });
 
@@ -77,12 +78,12 @@ function onCorrectGuess() {
   const closePopup = document.getElementById("close-popup");
   closePopup.insertAdjacentHTML('afterend', `<h2>Amazing🎉</h2>
             <p>You have done it again, constantly raising the bar for us all - and doing it flawlessly.</p>`);
-  
+
   for (let i = 0; i < guessBoxes.length; i++) {
-  guessBoxes[i].classList.remove("search-box");
-  guessBoxes[i].classList.add("guess-box");
+    guessBoxes[i].classList.remove("search-box");
+    guessBoxes[i].classList.add("guess-box");
   }
-  
+
   guessBoxes[currentGuess].classList.remove("search-box");
   guessBoxes[currentGuess].classList.add("guess-box");
   btn.disabled = true;
@@ -193,15 +194,32 @@ if (currentGuess === 0) {
   guessBoxes[0].classList.remove("guess-box");
   guessBoxes[0].classList.add("search-box");
   svgIcon = document.querySelector(".search-box svg");
-      svgIcon.removeEventListener("click", () => {
-        skipGuess();
-      });
-      svgIcon.addEventListener("click", () => {
-        skipGuess();
-      });
+  svgIcon.removeEventListener("click", () => {
+    skipGuess();
+  });
+  svgIcon.addEventListener("click", () => {
+    skipGuess();
+  });
 }
 
 function skipGuess() {
+  const iframeElement = document.querySelector("iframe");
+  const widget = SC.Widget(iframeElement);
+
+  widget.pause();
+  widget.seekTo(0);
+
+  cueCounter = 0;
+  btn.innerText = "CUE";
+
+  widget.pause();
+  widget.seekTo(0);
+
+  if (holdTimer) {
+    clearInterval(holdTimer);
+    holdTimer = null;
+  }
+
   if (currentGuess < guessBoxes.length) {
     if (currentGuess === 0) {
       const firstSearchBox = document.querySelector(".search-box");
@@ -234,25 +252,25 @@ function skipGuess() {
       nextGuessBox.classList.add("search-box");
 
       const newSearchBox = document.getElementById('search-box');
-  newSearchBox.addEventListener('input', function() {
-    const suggestionsDiv = document.getElementById('suggestions');
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-      const query = this.value.trim();
+      newSearchBox.addEventListener('input', function () {
+        const suggestionsDiv = document.getElementById('suggestions');
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+          const query = this.value.trim();
 
-      if (query.length > 0) {
-        fetchCSV(getCategoryFromFilename()).then(songs => {
-          const results = searchSongs(query, songs);
-          displaySuggestions(results);
-          suggestionsDiv.style.display = 'block';
-        });
-      } else {
-        suggestionsDiv.innerHTML = '';
-        suggestionsDiv.style.display = 'none';
-      }
-    }, 300);
-  });
-      
+          if (query.length > 0) {
+            fetchCSV(getCategoryFromFilename()).then(songs => {
+              const results = searchSongs(query, songs);
+              displaySuggestions(results);
+              suggestionsDiv.style.display = 'block';
+            });
+          } else {
+            suggestionsDiv.innerHTML = '';
+            suggestionsDiv.style.display = 'none';
+          }
+        }, 300);
+      });
+
       svgIcon = document.querySelector(".search-box svg");
       svgIcon.removeEventListener("click", () => {
         skipGuess();
@@ -315,7 +333,7 @@ async function fetchCSV(category) {
 
 function parseCSV(csvData) {
   const rows = csvData.trim().split('\n');
-  
+
   const songs = rows.slice(1).map(row => {
     const [title, artist] = row.split(';');
     if (!title || !artist) {
@@ -324,20 +342,20 @@ function parseCSV(csvData) {
     }
     return { title, artist };
   }).filter(song => song !== null);  // Remove null entries from the array
-  
+
   return songs;
 }
 
 function searchSongs(query, songs) {
-  return songs.filter(song => 
-    song.title.toLowerCase().includes(query.toLowerCase()) || 
+  return songs.filter(song =>
+    song.title.toLowerCase().includes(query.toLowerCase()) ||
     song.artist.toLowerCase().includes(query.toLowerCase())
   );
 }
 
-document.getElementById('search-box').addEventListener('input', function() {
+document.getElementById('search-box').addEventListener('input', function () {
   const suggestionsDiv = document.getElementById('suggestions');
-  
+
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
     const query = this.value.trim();
@@ -358,18 +376,18 @@ document.getElementById('search-box').addEventListener('input', function() {
 function displaySuggestions(results) {
   const suggestionsDiv = document.getElementById('suggestions');
   suggestionsDiv.innerHTML = '';
-  
+
   if (results.length > 0) {
     results.forEach(result => {
       const suggestionItem = document.createElement('div');
       suggestionItem.classList.add('suggestion-item');
       suggestionItem.textContent = `${result.title} - ${result.artist}`;
-      
-      suggestionItem.addEventListener('click', function() {
+
+      suggestionItem.addEventListener('click', function () {
         const searchBox = document.getElementById('search-box');
         searchBox.value = `${result.title} - ${result.artist}`;
         suggestionsDiv.style.display = 'none';
-        
+
         checkGuess(result);
       });
 
@@ -384,7 +402,7 @@ function getCurrentSong() {
   return new Promise((resolve, reject) => {
     const widget = SC.Widget(iframeElement);
 
-    widget.getCurrentSound(function(track) {
+    widget.getCurrentSound(function (track) {
       if (track) {
         resolve(track.title + " - " + track.user.username);
       } else {
@@ -423,50 +441,50 @@ function handleGuess(userGuess, song) {
     guessBoxes[currentGuess].classList.add(isCorrect ? 'correct' : 'incorrect');
 
     if (!isCorrect) {
-    currentGuess++;
-    saveState();
+      currentGuess++;
+      saveState();
 
-    if (currentGuess < guessBoxes.length) {
-      const nextGuessBox = guessBoxes[currentGuess];
-      nextGuessBox.innerHTML = `
+      if (currentGuess < guessBoxes.length) {
+        const nextGuessBox = guessBoxes[currentGuess];
+        nextGuessBox.innerHTML = `
   <input type="text" id="search-box" autocomplete="off" placeholder="Search for the song...">
   <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M7 7v10l7-5zm9 10V7h-2v10z"></path>
   </svg>
   <div id="suggestions" class="suggestions-dropdown"></div>`;
-      nextGuessBox.classList.remove("guess-box");
-      nextGuessBox.classList.add("search-box");
+        nextGuessBox.classList.remove("guess-box");
+        nextGuessBox.classList.add("search-box");
 
-      const newSearchBox = document.getElementById('search-box');
-  newSearchBox.addEventListener('input', function() {
-    const suggestionsDiv = document.getElementById('suggestions');
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-      const query = this.value.trim();
+        const newSearchBox = document.getElementById('search-box');
+        newSearchBox.addEventListener('input', function () {
+          const suggestionsDiv = document.getElementById('suggestions');
+          clearTimeout(debounceTimeout);
+          debounceTimeout = setTimeout(() => {
+            const query = this.value.trim();
 
-      if (query.length > 0) {
-        fetchCSV(getCategoryFromFilename()).then(songs => {
-          const results = searchSongs(query, songs);
-          displaySuggestions(results);
-          suggestionsDiv.style.display = 'block';
+            if (query.length > 0) {
+              fetchCSV(getCategoryFromFilename()).then(songs => {
+                const results = searchSongs(query, songs);
+                displaySuggestions(results);
+                suggestionsDiv.style.display = 'block';
+              });
+            } else {
+              suggestionsDiv.innerHTML = '';
+              suggestionsDiv.style.display = 'none';
+            }
+          }, 300);
         });
-      } else {
-        suggestionsDiv.innerHTML = '';
-        suggestionsDiv.style.display = 'none';
+
+        svgIcon = document.querySelector(".search-box svg");
+        svgIcon.removeEventListener("click", () => {
+          skipGuess();
+        });
+        svgIcon.addEventListener("click", () => {
+          skipGuess();
+        });
+        resetButton();
       }
-    }, 300);
-  });
-      
-      svgIcon = document.querySelector(".search-box svg");
-      svgIcon.removeEventListener("click", () => {
-        skipGuess();
-      });
-      svgIcon.addEventListener("click", () => {
-        skipGuess();
-      });
-      resetButton();
     }
-  }
 
     if (currentGuess === guessBoxes.length) {
       btn.disabled = true;
@@ -477,34 +495,60 @@ function handleGuess(userGuess, song) {
 
 }
 
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
   const searchBox = document.getElementById('search-box');
   const suggestionsDiv = document.getElementById('suggestions');
-  
+
   if (!searchBox.contains(event.target) && !suggestionsDiv.contains(event.target)) {
     suggestionsDiv.style.display = 'none';
   }
 });
 
-btn.addEventListener("mousedown", () => {
-  btn.classList.add("active");
-  playSong();
-});
+// btn.addEventListener("mousedown", () => {
+//   btn.classList.add("active");
+//   playSong();
+// });
 
-btn.addEventListener("mouseup", () => {
-  btn.classList.remove("active");
-  btn.classList.add("disabled-btn");
-  btn.disabled = true;
+// btn.addEventListener("mouseup", () => {
+//   btn.classList.remove("active");
+//   btn.classList.add("disabled-btn");
+//   btn.disabled = true;
 
-  const iframeElement = document.querySelector("iframe");
-  const widget = SC.Widget(iframeElement);
-  
-  widget.pause();
-  widget.seekTo(0);
+//   const iframeElement = document.querySelector("iframe");
+//   const widget = SC.Widget(iframeElement);
 
-  if (holdTimer) {
-    clearInterval(holdTimer);
-    holdTimer = null;
+//   widget.pause();
+//   widget.seekTo(0);
+
+//   if (holdTimer) {
+//     clearInterval(holdTimer);
+//     holdTimer = null;
+//   }
+// });
+
+btn.addEventListener("click", () => {
+  cueCounter++;
+  if (cueCounter === 1) {
+    btn.classList.add("active");
+    btn.innerText = "PAUSE";
+    playSong();
+  } else {
+    cueCounter = 0;
+    btn.classList.remove("active");
+    btn.classList.add("disabled-btn");
+    btn.disabled = true;
+    btn.innerText = "CUE";
+
+    const iframeElement = document.querySelector("iframe");
+    const widget = SC.Widget(iframeElement);
+
+    widget.pause();
+    widget.seekTo(0);
+
+    if (holdTimer) {
+      clearInterval(holdTimer);
+      holdTimer = null;
+    }
   }
 });
 
@@ -520,7 +564,7 @@ btn.addEventListener("mouseup", () => {
 
 //   const iframeElement = document.querySelector("iframe");
 //   const widget = SC.Widget(iframeElement);
-  
+
 //   widget.pause();
 //   widget.seekTo(0);
 
@@ -530,20 +574,20 @@ btn.addEventListener("mouseup", () => {
 //   }
 // });
 
-document.getElementById('main-title').addEventListener('click', function() {
+document.getElementById('main-title').addEventListener('click', function () {
   localStorage.clear();
 
   location.reload();
 });
 
-document.getElementById("tryAnotherDecade").addEventListener("click", function() {
+document.getElementById("tryAnotherDecade").addEventListener("click", function () {
   window.location.href = '../index.html'
 });
 
-document.getElementById("shareResults").addEventListener("click", function() {
+document.getElementById("shareResults").addEventListener("click", function () {
   const category = document.querySelector(".timer h2").innerHTML;
   if (currentGuess < guessBoxes.length) {
-    navigator.clipboard.writeText(`Guessed today's Cuedle ${category} in ${currentGuess + 1} guesses✅`);
+    navigator.clipboard.writeText(`Guessed today's Cuedle ${category} in ${currentGuess + 1} guess${currentGuess === 0 ? "" : "es"}✅`);
   } else {
     navigator.clipboard.writeText(`Failed to guess today's Cuedle ${category}❌`);
   }
