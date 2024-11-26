@@ -577,11 +577,11 @@
   //   }
   // });
 
-  document.getElementById('main-title').addEventListener('click', function () {
-    localStorage.clear();
+  // document.getElementById('main-title').addEventListener('click', function () {
+  //   localStorage.clear();
 
-    location.reload();
-  });
+  //   location.reload();
+  // });
 
   document.getElementById("tryAnotherDecade").addEventListener("click", function () {
     window.location.href = '../index.html'
