@@ -16,10 +16,18 @@ body {
   height: 825px;
 }
 
+#logo {
+  width: 40%;
+  margin-left: 15px;
+  padding: 5px;
+  object-fit: cover;
+}
+
 main {
   border-left: 6px solid rgb(63, 63, 63);
   border-right: 6px solid rgb(63, 63, 63);
   height: 97%;
+  margin-top: 20px;
 }
 
 h1 {
