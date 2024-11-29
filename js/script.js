@@ -155,6 +155,21 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       popup.style.display = 'flex';
     }
 
+    function showCopyPopup() {
+      const popup = document.getElementById('copy-popup');
+
+      popup.style.display = 'block';
+      setTimeout(() => {
+        popup.style.opacity = 1;
+        popup.style.transform = 'translateY(0)'; 
+      }, 10);
+
+      setTimeout(() => {
+        popup.style.opacity = 0;
+        popup.style.transform = 'translateY(10px)';
+      }, 3000);
+    }
+
     function onCorrectGuess() {
       const closePopup = document.getElementById("close-popup");
       closePopup.insertAdjacentHTML('afterend', `<h2>Amazing🎉</h2>
@@ -695,9 +710,10 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       } else {
         navigator.clipboard.writeText(`Failed to guess today's Cuedle ${category}❌`);
       }
+      showCopyPopup();
     });
 
-    document.getElementById('homeButton').addEventListener('click', function() {
+    document.getElementById('homeButton').addEventListener('click', function () {
       window.location.href = '../index.html';
     });
 
