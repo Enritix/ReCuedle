@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/category.css">
     <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
-    <link rel="stylesheet" href="../css/cookies.css">
+    <script type="module" src="../js/script.js"></script>
     <link rel="icon" href="../assets/images/ReCuedle Logo.png" type="image/png" />
 </head>
 
@@ -54,7 +54,7 @@
     <div id="popup" class="popup">
         <div class="popup-content">
             <span id="close-popup" class="close-btn">&times;</span>
-
+            <iframe id="soundcloudEmbed"></iframe>
             <script src="https://w.soundcloud.com/player/api.js"></script>
             <span class="song-info"></span>
             <div class="popup-buttons">
@@ -63,45 +63,15 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (!document.cookie.includes("cookies_accepted_zeroes=true")) {
-                document.getElementById("cookie-consent-banner").style.display = "block";
-            } else {
-                loadSoundCloudEmbed();
-                var script = document.createElement("script");
-                script.defer = true;
-                script.src = "../js/script.js";
-                document.body.appendChild(script);
-            }
-
-            document.getElementById("accept-cookies").addEventListener("click", function () {
-                console.log("Accept button clicked");
-                document.getElementById("cookie-consent-banner").style.display = "none";
-                document.cookie = "cookies_accepted_zeroes=true; max-age=2592000; path=/;";
-
-                loadSoundCloudEmbed();
-
-                var script = document.createElement("script");
-                script.defer = true;
-                script.src = "../js/script.js";
-                document.body.appendChild(script);
-            });
-
-        });
-
-        function loadSoundCloudEmbed() {
-            const iframe = document.createElement("iframe");
-            iframe.width = "100%";
-            iframe.height = "166";
-            iframe.scrolling = "no";
-            iframe.frameborder = "no";
-            iframe.allow = "autoplay";
-            iframe.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2605805&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false";
-            const closePopup = document.getElementById("close-popup");
-            closePopup.insertAdjacentElement('afterend', iframe);
-        }
-    </script>
+    <div id="warning-popup" class="popup">
+        <div class="popup-content">
+            <h1>Error⚠️</h1>
+            <p>You need to accept cookies in order to play the game. Please accept them to continue.</p>
+            <div class="popup-buttons">
+                <button target="../index.html" id="homeButton">Go To Home</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
