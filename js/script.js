@@ -706,9 +706,9 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     document.getElementById("shareResults").addEventListener("click", function () {
       const category = document.querySelector(".timer h2").innerHTML;
       if (currentGuess < guessBoxes.length) {
-        navigator.clipboard.writeText(`Guessed today's Cuedle ${category} in ${currentGuess + 1} guess${currentGuess === 0 ? "" : "es"}✅`);
+        navigator.clipboard.writeText(`Guessed today's ReCuedle - ${category} in ${currentGuess + 1} guess${currentGuess === 0 ? "" : "es"}✅`);
       } else {
-        navigator.clipboard.writeText(`Failed to guess today's Cuedle ${category}❌`);
+        navigator.clipboard.writeText(`Failed to guess today's ReCuedle - ${category}❌`);
       }
       showCopyPopup();
     });
