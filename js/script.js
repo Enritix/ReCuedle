@@ -5,8 +5,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 //IIFE
 (() => {
 
-  //window.addEventListener('load', loadState);
-  window.addEventListener('DOMContentLoaded', gameLoop());
+  window.addEventListener('DOMContentLoaded', gameLoop);
 
   function gameLoop() {
     let debounceTimeout;
@@ -64,7 +63,16 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     // }
 
     function init() {
+      const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+      const savedDate = localStorage.getItem('savedDate');
+    
+      if (savedDate !== today) {
+        localStorage.clear();
+        localStorage.setItem('savedDate', today);
+      }
+
+      loadState();
       if (!document.cookie.includes(`cookies_accepted=true`)) {
         openWarning();
       } else {
@@ -73,7 +81,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
       async function loadSoundCloudEmbed() {
 
-        const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const category = getCategoryFromFilename();
 
         try {
@@ -89,10 +96,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
             iframe.frameborder = "no";
             iframe.allow = "autoplay";
             iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
-
-            // Insert the iframe after the close-popup button
-            const closePopup = document.getElementById("close-popup");
-            closePopup.insertAdjacentElement('afterend', iframe);
 
             // Update the song info
             const songInfoElement = document.querySelector('.song-info');
@@ -161,7 +164,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       popup.style.display = 'block';
       setTimeout(() => {
         popup.style.opacity = 1;
-        popup.style.transform = 'translateY(0)'; 
+        popup.style.transform = 'translateY(0)';
       }, 10);
 
       setTimeout(() => {
@@ -171,6 +174,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     }
 
     function onCorrectGuess() {
+      saveState();
       const closePopup = document.getElementById("close-popup");
       closePopup.insertAdjacentHTML('afterend', `<h2>Amazing🎉</h2>
             <p>You have done it again, constantly raising the bar for us all - and doing it flawlessly.</p>`);
@@ -184,7 +188,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       guessBoxes[currentGuess].classList.add("guess-box");
       btn.disabled = true;
       btn.classList.add("disabled-btn");
-      saveState();
       openPopup();
     }
 
@@ -213,50 +216,89 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       resetTimer();
     }
 
-    // function loadState() {
-    //   const savedCurrentGuess = localStorage.getItem('currentGuess');
-    //   const skippedGuesses = JSON.parse(localStorage.getItem('skippedGuesses')) || [];
-    //   const answeredGuesses = JSON.parse(localStorage.getItem('answeredGuesses')) || [];
+    function loadState() {
+      const category = getCategoryFromFilename();
+      const savedCurrentGuess = localStorage.getItem(`${category}-currentGuess`);
+      const skippedGuesses = JSON.parse(localStorage.getItem(`${category}-skippedGuesses`)) || [];
+      const answeredGuesses = JSON.parse(localStorage.getItem(`${category}-answeredGuesses`)) || [];
+      let foundCorrectAnswer = false;
 
-    //   if (savedCurrentGuess) {
-    //     currentGuess = parseInt(savedCurrentGuess, 10);
+      if (savedCurrentGuess) {
+        currentGuess = parseInt(savedCurrentGuess, 10);
 
-    //     for (let i = 0; i < currentGuess; i++) {
-    //       if (skippedGuesses.some(item => item.index === i)) {
-    //         guessBoxes[i].innerHTML = "SKIP ❌";
-    //         guessBoxes[i].classList.remove("search-box");
-    //         guessBoxes[i].classList.add("guess-box");
-    //       } else {
-    //         const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
-    //         if (answered) {
-    //           guessBoxes[i].innerHTML = `${answered.guess} ${answered.correct ? '✅' : '❌'}`;
-    //           guessBoxes[i].classList.add(answered.correct ? 'correct' : 'incorrect');
-    //           guessBoxes[i].classList.remove("search-box");
-    //           guessBoxes[i].classList.add("guess-box");
-    //         } else {
-    //           guessBoxes[i].innerHTML = `
-    //             <input type="text" class="search-input" autocomplete="off" placeholder="Search for the song...">
-    //             <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    //               <path d="M7 7v10l7-5zm9 10V7h-2v10z"></path>
-    //             </svg>
-    //             <div id="suggestions" class="suggestions-dropdown"></div>`;
+        for (let i = 0; i < currentGuess + 1; i++) {
+          if (skippedGuesses.some(item => item.index === i)) {
+            guessBoxes[i].innerHTML = "SKIP ❌";
+            guessBoxes[i].classList.remove("search-box");
+            guessBoxes[i].classList.add("guess-box");
+          } else {
+            const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
+            if (answered) {
+              guessBoxes[i].innerHTML = `${answered.guess} ${answered.correct ? '✅' : '❌'}`;
+              guessBoxes[i].classList.add(answered.correct ? 'correct' : 'incorrect');
+              guessBoxes[i].classList.remove("search-box");
+              guessBoxes[i].classList.add("guess-box");
 
-    //           guessBoxes[i].classList.remove("guess-box");
-    //           guessBoxes[i].classList.add("search-box");
+              if (answered.correct) {
+                foundCorrectAnswer = true;
+              }
+            } else {
+              if (!foundCorrectAnswer) {
+                guessBoxes[currentGuess].innerHTML = `
+                <input type="text" id="search-box" autocomplete="off" placeholder="Search for the song...">
+                <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 7v10l7-5zm9 10V7h-2v10z"></path>
+                </svg>
+                <div id="suggestions" class="suggestions-dropdown"></div>`;
 
-    //           const svgIcon = guessBoxes[i].querySelector("svg");
-    //           svgIcon.removeEventListener("click", skipGuess);
-    //           svgIcon.addEventListener("click", () => {
-    //             skipGuess();
-    //           });
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+                guessBoxes[i].classList.remove("guess-box");
+                guessBoxes[i].classList.add("search-box");
+
+
+                const newSearchBox = document.getElementById('search-box');
+                if (newSearchBox) {
+                  newSearchBox.addEventListener('input', function () {
+                    const suggestionsDiv = document.getElementById('suggestions');
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => {
+                      const query = this.value.trim();
+                      if (query.length > 0) {
+                        fetchCSV(getCategoryFromFilename()).then(songs => {
+                          const results = searchSongs(query, songs);
+                          displaySuggestions(results);
+                          suggestionsDiv.style.display = 'block';
+                        });
+                      } else {
+                        suggestionsDiv.innerHTML = '';
+                        suggestionsDiv.style.display = 'none';
+                      }
+                    }, 300);
+                  });
+                } else {
+                  console.error("Search box element not found!");
+                }
+
+                svgIcon = document.querySelector(".search-box svg");
+                svgIcon.removeEventListener("click", () => {
+                  skipGuess();
+                });
+                svgIcon.addEventListener("click", () => {
+                  skipGuess();
+                });
+                resetButton();
+              }
+            }
+          }
+        }
+      }
+      if (foundCorrectAnswer) {
+        onCorrectGuess();
+      }
+    }
 
     function saveState() {
-      localStorage.setItem('currentGuess', currentGuess);
+      const category = getCategoryFromFilename();
+      localStorage.setItem(`${category}-currentGuess`, currentGuess);
 
       const skippedGuesses = [];
       const answeredGuesses = [];
@@ -276,8 +318,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         }
       }
 
-      localStorage.setItem('skippedGuesses', JSON.stringify(skippedGuesses));
-      localStorage.setItem('answeredGuesses', JSON.stringify(answeredGuesses));
+      localStorage.setItem(`${category}-skippedGuesses`, JSON.stringify(skippedGuesses));
+      localStorage.setItem(`${category}-answeredGuesses`, JSON.stringify(answeredGuesses));
     }
 
     if (currentGuess === 0) {
@@ -603,6 +645,10 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
             });
             resetButton();
           }
+        }
+        else {
+          currentGuess++;
+          saveState();
         }
 
         if (currentGuess === guessBoxes.length) {
