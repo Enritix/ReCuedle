@@ -41,7 +41,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     init();
 
     document.getElementById("tryAnotherDecade").addEventListener("click", function () {
-      window.location.href = '../../index.html';
+      window.location.href = '../../';
     });
 
     document.getElementById("shareResults").addEventListener("click", function () {
@@ -55,7 +55,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
-      window.location.href = '../../index.html';
+      window.location.href = '../../';
     });
 
     // function init() {
@@ -764,7 +764,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     // });
 
     document.getElementById("tryAnotherDecade").addEventListener("click", function () {
-      window.location.href = '../../index.html'
+      window.location.href = '../../'
     });
 
     document.getElementById("shareResults").addEventListener("click", function () {
@@ -778,7 +778,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
-      window.location.href = '../../index.html';
+      window.location.href = '../../';
     });
 
   }
