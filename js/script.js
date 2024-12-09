@@ -41,9 +41,9 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     init();
 
     document.getElementById("tryAnotherDecade").addEventListener("click", function () {
-      window.location.href = '../index.html';
+      window.location.href = '../../index.html';
     });
-  
+
     document.getElementById("shareResults").addEventListener("click", function () {
       const category = document.querySelector(".timer h2").innerHTML;
       if (currentGuess < guessBoxes.length) {
@@ -55,7 +55,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
-      window.location.href = '../index.html';
+      window.location.href = '../../index.html';
     });
 
     // function init() {
@@ -83,7 +83,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
       const savedDate = localStorage.getItem('savedDate');
-    
+
       if (savedDate !== today) {
         localStorage.clear();
         localStorage.setItem('savedDate', today);
@@ -260,7 +260,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
                 foundCorrectAnswer = true;
               }
             } else {
-              if (!foundCorrectAnswer) {
+              if (!(foundCorrectAnswer || currentGuess === 6)) {
                 guessBoxes[currentGuess].innerHTML = `
                 <input type="text" id="search-box" autocomplete="off" placeholder="Search for the song...">
                 <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -310,6 +310,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       }
       if (foundCorrectAnswer) {
         onCorrectGuess();
+      } else if (currentGuess === 6) {
+        onLastWrongGuess();
       }
     }
 
@@ -446,25 +448,24 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
     function getCategoryFromFilename() {
       const path = window.location.pathname;
-      const filename = path.split('/').pop();
-      const category = filename.split('.')[0];
+      const category = path.split('/').slice(-2, -1)[0];
       return category;
     }
 
     function getCSVFilePath(category) {
       switch (category) {
         case 'seventies':
-          return '../data/songs/seventies_songs.csv';
+          return '../../data/songs/seventies_songs.csv';
         case 'eighties':
-          return '../data/songs/eighties_songs.csv';
+          return '../../data/songs/eighties_songs.csv';
         case 'nineties':
-          return '../data/songs/nineties_songs.csv';
+          return '../../data/songs/nineties_songs.csv';
         case 'zeroes':
-          return '../data/songs/zeroes_songs.csv';
+          return '../../data/songs/zeroes_songs.csv';
         case '2010s':
-          return '../data/songs/2010s_songs.csv';
+          return '../../data/songs/2010s_songs.csv';
         case '2020s':
-          return '../data/songs/2020s_songs.csv';
+          return '../../data/songs/2020s_songs.csv';
         default:
           return null;
       }
@@ -763,7 +764,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     // });
 
     document.getElementById("tryAnotherDecade").addEventListener("click", function () {
-      window.location.href = '../index.html'
+      window.location.href = '../../index.html'
     });
 
     document.getElementById("shareResults").addEventListener("click", function () {
@@ -777,7 +778,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
-      window.location.href = '../index.html';
+      window.location.href = '../../index.html';
     });
 
   }

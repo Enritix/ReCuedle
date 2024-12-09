@@ -4,30 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReCuedle - Seventies Essentials</title>
-    <link rel="stylesheet" href="../css/reset.css">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/category.css">
+    <title>ReCuedle - Back to the Nineties</title>
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/category.css">
     <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
-    <script type="module" src="../js/script.js"></script>
-    <link rel="icon" href="../assets/images/ReCuedle Logo.png" type="image/png" />
+    <script type="module" src="../../js/script.js"></script>
+    <link rel="icon" href="../../assets/images/ReCuedle Logo.png" type="image/png" />
 </head>
 
 <body>
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent-banner" style="display: none;">
+        <p>This website uses SoundCloud embeds, which may set cookies on your device. By using this website, you agree
+            to our use of cookies. <a href="https://soundcloud.com/pages/cookies" target="_blank">Learn more</a></p>
+        <button id="accept-cookies">Accept</button>
+    </div>
     <div class="background">
         <main>
             <!-- <h1 id="main-title">
                 <span>R</span><span>e</span><span>C</span><span>u</span><span>e</span><span>d</span><span>l</span><span>e</span>
             </h1> -->
-            <img id="logo" src="../assets/images/ReCuedle Large Logo.png" alt="Logo">
+            <img id="logo" src="../../assets/images/ReCuedle Large Logo.png" alt="Logo">
             <section class="song-container">
                 <div class="timer">
-                    <h2>Seventies Essentials</h2>
+                    <h2>Back to the Nineties</h2>
                     <p>Time: 0:00</p>
                 </div>
                 <div class="cue">
                     <button id="cue-btn" title="Click to play song">Cue</button>
-                    <a href="../index.html"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+                    <a href="../../index.html"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
                             text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
                             clip-rule="evenodd" viewBox="0 0 475 511.87">
                             <path
@@ -44,13 +50,10 @@
                 </div>
             </section>
         </main>
-
     </div>
     <div id="popup" class="popup">
         <div class="popup-content">
             <span id="close-popup" class="close-btn">&times;</span>
-            <h2 id="popup-title"></h2>
-            <p id="popup-text"></p>
             <iframe id="soundcloudEmbed"></iframe>
             <script src="https://w.soundcloud.com/player/api.js"></script>
             <span class="song-info"></span>
@@ -65,7 +68,7 @@
             <h1>Error⚠️</h1>
             <p>You need to accept cookies in order to play the game. Please accept them to continue.</p>
             <div class="popup-buttons">
-                <button target="../index.html" id="homeButton">Go To Home</button>
+                <button target="../../index.html" id="homeButton">Go To Home</button>
             </div>
         </div>
     </div>
@@ -73,6 +76,5 @@
         <span class="emoji">&#x2705;</span> Results copied
     </div>
 </body>
-
 
 </html>
