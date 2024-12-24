@@ -44,14 +44,41 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       window.location.href = '../../';
     });
 
-    document.getElementById("shareResults").addEventListener("click", function () {
-      const category = document.querySelector(".timer h2").innerHTML;
-      if (currentGuess < guessBoxes.length) {
-        navigator.clipboard.writeText(`Guessed today's ReCuedle - ${category} in ${currentGuess} guess${currentGuess === 1 ? "" : "es"}✅`);
-      } else {
-        navigator.clipboard.writeText(`Failed to guess today's ReCuedle - ${category}❌`);
-      }
-      showCopyPopup();
+    document.getElementById("tryAnotherDecade").addEventListener("click", function () {
+      window.location.href = '../../'
+    });
+
+        document.getElementById("shareResults").addEventListener("click", function () {
+        const category = getCategoryFromFilename();
+        const resultsText = shareResults(category);
+    
+        if (window.innerWidth <= 768) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ReCuedle Results',
+                    text: resultsText
+                }).then(() => {
+                    console.log('Results shared successfully');
+                }).catch((error) => {
+                    console.error('Error sharing results:', error);
+                });
+            } else {
+                console.warn('Web Share API is not supported in this browser.');
+                navigator.clipboard.writeText(resultsText).then(() => {
+                    console.log('Results copied to clipboard');
+                    showCopyPopup();
+                }).catch((error) => {
+                    console.error('Error copying results to clipboard:', error);
+                });
+            }
+        } else {
+            navigator.clipboard.writeText(resultsText).then(() => {
+                console.log('Results copied to clipboard');
+                showCopyPopup();
+            }).catch((error) => {
+                console.error('Error copying results to clipboard:', error);
+            });
+        }
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
@@ -678,6 +705,44 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
     }
 
+        function shareResults(category) {
+        const savedCurrentGuess = localStorage.getItem(`${category}-currentGuess`);
+        const skippedGuesses = JSON.parse(localStorage.getItem(`${category}-skippedGuesses`)) || [];
+        const answeredGuesses = JSON.parse(localStorage.getItem(`${category}-answeredGuesses`)) || [];
+        const date = new Date().toLocaleDateString();
+        const categoryElement = document.querySelector(".timer h2").innerHTML;
+        let results = [];
+    
+        // Check if the browser is in dark mode
+        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const skipEmoji = isDarkMode ? '⬛' : '⬜';
+    
+        if (savedCurrentGuess) {
+            const currentGuess = parseInt(savedCurrentGuess, 10);
+    
+            for (let i = 0; i < currentGuess; i++) {
+                if (skippedGuesses.some(item => item.index === i)) {
+                    results.push(skipEmoji);
+                } else {
+                    const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
+                    if (answered) {
+                        results.push(answered.correct ? '✅' : '❌');
+                    } else {
+                        results.push(skipEmoji);
+                    }
+                }
+            }
+        }
+    
+        while (results.length < 6) {
+            results.push(skipEmoji);
+        }
+    
+        const resultsString = results.join('');
+        console.log(resultsString);
+        return `ReCuedle - ${categoryElement} - ${date}\n\n${resultsString}\n\n#ReCuedle @ReCuedle https://recuedle.com`;
+    }
+
     document.addEventListener('click', function (event) {
       const searchBox = document.getElementById('search-box');
       const suggestionsDiv = document.getElementById('suggestions');
@@ -767,14 +832,36 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       window.location.href = '../../'
     });
 
-    document.getElementById("shareResults").addEventListener("click", function () {
-      const category = document.querySelector(".timer h2").innerHTML;
-      if (currentGuess < guessBoxes.length) {
-        navigator.clipboard.writeText(`Guessed today's ReCuedle - ${category} in ${currentGuess} guess${currentGuess === 1 ? "" : "es"}✅`);
-      } else {
-        navigator.clipboard.writeText(`Failed to guess today's ReCuedle - ${category}❌`);
-      }
-      showCopyPopup();
+        document.getElementById("shareResults").addEventListener("click", function () {
+        const category = getCategoryFromFilename();
+    
+        if (window.innerWidth <= 768) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ReCuedle Results',
+                    text: resultsText
+                }).then(() => {
+                    console.log('Results shared successfully');
+                }).catch((error) => {
+                    console.error('Error sharing results:', error);
+                });
+            } else {
+                console.warn('Web Share API is not supported in this browser.');
+                navigator.clipboard.writeText(resultsText).then(() => {
+                    console.log('Results copied to clipboard');
+                    showCopyPopup();
+                }).catch((error) => {
+                    console.error('Error copying results to clipboard:', error);
+                });
+            }
+        } else {
+            navigator.clipboard.writeText(resultsText).then(() => {
+                console.log('Results copied to clipboard');
+                showCopyPopup();
+            }).catch((error) => {
+                console.error('Error copying results to clipboard:', error);
+            });
+        }
     });
 
     document.getElementById('homeButton').addEventListener('click', function () {
