@@ -715,7 +715,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     
         // Check if the browser is in dark mode
         const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const skipEmoji = isDarkMode ? '⬛' : '⬜';
+        const skipEmoji = isDarkMode ? '⬜' : '⬛';
     
         if (savedCurrentGuess) {
             const currentGuess = parseInt(savedCurrentGuess, 10);
