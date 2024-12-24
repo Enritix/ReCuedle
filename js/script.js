@@ -705,52 +705,57 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
     }
 
-        function shareResults(category) {
-        const savedCurrentGuess = localStorage.getItem(`${category}-currentGuess`);
-        const skippedGuesses = JSON.parse(localStorage.getItem(`${category}-skippedGuesses`)) || [];
-        const answeredGuesses = JSON.parse(localStorage.getItem(`${category}-answeredGuesses`)) || [];
-        const date = new Date().toLocaleDateString();
-        const categoryElement = document.querySelector(".timer h2").innerHTML;
-        let results = [];
-    
-        // Check if the browser is in dark mode
-        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const skipEmoji = isDarkMode ? '⬜' : '⬛';
-    
-        if (savedCurrentGuess) {
-            const currentGuess = parseInt(savedCurrentGuess, 10);
-    
-            for (let i = 0; i < currentGuess; i++) {
-                if (skippedGuesses.some(item => item.index === i)) {
-                    results.push(skipEmoji);
-                } else {
-                    const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
-                    if (answered) {
-                        results.push(answered.correct ? '✅' : '❌');
-                    } else {
+                function shareResults(category) {
+            const savedCurrentGuess = localStorage.getItem(`${category}-currentGuess`);
+            const skippedGuesses = JSON.parse(localStorage.getItem(`${category}-skippedGuesses`)) || [];
+            const answeredGuesses = JSON.parse(localStorage.getItem(`${category}-answeredGuesses`)) || [];
+            const date = new Date().toLocaleDateString();
+            const categoryElement = document.querySelector(".timer h2").innerHTML;
+            let results = [];
+            let foundCorrectAnswer = false;
+        
+            // Check if the browser is in dark mode
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const skipEmoji = isDarkMode ? '⬛' : '⬜';
+        
+            if (savedCurrentGuess) {
+                const currentGuess = parseInt(savedCurrentGuess, 10);
+        
+                for (let i = 0; i < currentGuess; i++) {
+                    if (skippedGuesses.some(item => item.index === i)) {
                         results.push(skipEmoji);
+                    } else {
+                        const answered = answeredGuesses.find(item => item.id === `answered-${i}`);
+                        if (answered) {
+                            results.push(answered.correct ? '✅' : '❌');
+                            if (answered.correct) {
+                                foundCorrectAnswer = true;
+                            }
+                        } else {
+                            results.push(skipEmoji);
+                        }
                     }
                 }
             }
+        
+            while (results.length < 6) {
+                results.push(skipEmoji);
+            }
+        
+            const resultsString = results.join('');
+            const finalEmoji = foundCorrectAnswer ? '🎉' : '😞';
+            console.log(resultsString);
+            return `ReCuedle - ${categoryElement} - ${date}\n\n${finalEmoji} ${resultsString}\n\n#ReCuedle @ReCuedle https://recuedle.com`;
         }
-    
-        while (results.length < 6) {
-            results.push(skipEmoji);
-        }
-    
-        const resultsString = results.join('');
-        console.log(resultsString);
-        return `ReCuedle - ${categoryElement} - ${date}\n\n${resultsString}\n\n#ReCuedle @ReCuedle https://recuedle.com`;
-    }
-
-    document.addEventListener('click', function (event) {
-      const searchBox = document.getElementById('search-box');
-      const suggestionsDiv = document.getElementById('suggestions');
-
-      if (!searchBox.contains(event.target) && !suggestionsDiv.contains(event.target)) {
-        suggestionsDiv.style.display = 'none';
-      }
-    });
+        
+        document.addEventListener('click', function (event) {
+            const searchBox = document.getElementById('search-box');
+            const suggestionsDiv = document.getElementById('suggestions');
+        
+            if (!searchBox.contains(event.target) && !suggestionsDiv.contains(event.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
 
     // btn.addEventListener("mousedown", () => {
     //   btn.classList.add("active");
