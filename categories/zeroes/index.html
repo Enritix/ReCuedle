@@ -5,12 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReCuedle - Now It's the Zeroes</title>
-    <link rel="stylesheet" href="../../css/reset.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <link rel="stylesheet" href="../../css/category.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/category.css">
     <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
-    <script type="module" src="../../js/script.js"></script>
-    <link rel="icon" href="../../assets/images/ReCuedle Logo.png" type="image/png" />
+    <script type="module" src="/js/script.js"></script>
+    <script src="/js/popup.js" defer></script>
+    <script src="js/popup.js" defer></script>
+    <link rel="icon" href="/assets/images/ReCuedle Logo.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8DJ4L9Y8GB"></script>
     <script>
@@ -33,10 +36,21 @@
     </div>
     <div class="background">
         <main>
-            <!-- <h1 id="main-title">
-                <span>R</span><span>e</span><span>C</span><span>u</span><span>e</span><span>d</span><span>l</span><span>e</span>
-            </h1> -->
-            <img id="logo" src="../../assets/images/ReCuedle Large Logo.png" alt="Logo">
+            <header>
+                <nav class="navbar">
+                    <ul class="nav-links left">
+                      <li><a href="/" id="home"><i class="fas fa-house"></i></a></li>
+                      <li><a href="" id="info"><i class="fas fa-circle-info"></i></a></li>
+                    </ul>
+                    <div class="logo">
+                        <a href=""><img id="logo" src="/assets/images/ReCuedle Large Logo.png" alt="Logo"></a>
+                    </div>
+                    <ul class="nav-links right">
+                      <li><a href=""><i class="fas fa-trophy"></i></a></li>
+                      <li><a href="" id="contact"><i class="fas fa-envelope"></i></a></li>
+                    </ul>
+                  </nav>
+            </header>
             <section class="song-container">
                 <div class="timer">
                     <h2>Now It's the Zeroes</h2>
@@ -72,6 +86,10 @@
                 <button id="tryAnotherDecade">Try Another Decade</button>
                 <button id="shareResults">Share Your Results</button>
             </div>
+        </div>
+    </div>
+    <div id="general-popup" class="popup">
+        <div class="popup-content">
         </div>
     </div>
     <div id="warning-popup" class="popup">
