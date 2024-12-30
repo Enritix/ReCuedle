@@ -117,11 +117,11 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       }
 
       loadState();
-      if (!document.cookie.includes(`cookies_accepted=true`)) {
-        openWarning();
-      } else {
+      // if (!document.cookie.includes(`cookies_accepted=true`)) {
+      //   openWarning();
+      // } else {
         loadSoundCloudEmbed();
-      }
+      // }
 
       async function loadSoundCloudEmbed() {
 
