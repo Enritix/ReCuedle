@@ -25,7 +25,7 @@ function setupGeneralPopup(selector) {
             <h2>Contact</h2>
             <p>Have you any questions/recommendations or did you find a bug? Please contact me @ReCuedle on Twitter.</p>
             <h2>Support</h2>
-            <p>Enjoying ReCuedle?</p>
+            <p>Enjoying ReCuedle? Hosting the website and song database costs money, so support is always highly appreciated☺️</p>
             <a id="kofi-button" href="https://ko-fi.com/enritix" target="_blank">
             <img src="/assets/images/kofi_symbol.png" alt="Ko-fi logo">Consider buying me a coffee</a>`);
     document.querySelector('#kofi-button').addEventListener('click', function () {
@@ -43,20 +43,18 @@ function cheersKofiButton() {
                             Cheers!`;
   let styleSheet = document.styleSheets[1];
 
-  // Loop through existing rules and remove the specific rule for the pseudo-element
   for (let i = 0; i < styleSheet.cssRules.length; i++) {
     if (styleSheet.cssRules[i].selectorText === '.popup-content #kofi-button::after') {
-      styleSheet.deleteRule(i); // Remove the existing rule
+      styleSheet.deleteRule(i);
       break;
     }
   }
 
-  // Add the modified rule
   styleSheet.insertRule(`
-                              .popup-content #kofi-button::after {
-                                content: '';
-                              }
-                            `, styleSheet.cssRules.length);
+                        .popup-content #kofi-button::after {
+                          content: '';
+                        }
+                        `, styleSheet.cssRules.length);
 }
 
 document.getElementById('general-popup').addEventListener('click', function (event) {
