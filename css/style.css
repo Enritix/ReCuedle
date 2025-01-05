@@ -225,11 +225,23 @@ main h1 span:nth-child(2) {
     background-color: rgb(55, 54, 54);
 }
 
+@media screen and (max-width: 3000px) {
+  html,
+  body {
+    overflow: visible !important;
+  }
+  
+}
+
 @media (max-width: 1600px) {
+  html,
+  body {
+    overflow: visible !important;
+  }
+
   .background {
     width: auto; /* Adjust the width for smaller screens */
     height: auto; /* Allow height to adjust automatically */
-    
   }
 }
 
