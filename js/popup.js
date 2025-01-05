@@ -23,7 +23,7 @@ function setupGeneralPopup(selector) {
     generalPopupContent.insertAdjacentHTML('beforeend',
       `<span id="close-general-popup" class="close-btn">&times;</span>
             <h2>Contact</h2>
-            <p>Have you any questions/recommendations or did you find a bug? Please contact me @ReCuedle on Twitter.</p>
+            <p>Have you any questions/recommendations or did you find a bug? Please contact me @ReCuedle on Twitter or mail me: <a href="mailto:enrico@recuedle.com">enrico@recuedle.com</a></p>
             <h2>Support</h2>
             <p>Enjoying ReCuedle? Hosting the website and song database costs money, so support is always highly appreciated☺️</p>
             <a id="kofi-button" href="https://ko-fi.com/enritix" target="_blank">
