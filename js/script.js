@@ -117,6 +117,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       }
 
       loadState();
+      // loadStats();
+      
       // if (!document.cookie.includes(`cookies_accepted=true`)) {
       //   openWarning();
       // } else {
@@ -233,6 +235,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       btn.disabled = true;
       btn.classList.add("disabled-btn");
       openPopup();
+      //saveStats(true);
     }
 
     function onLastWrongGuess() {
@@ -241,6 +244,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
             <p>Better luck next time! The song was:</p>`);
       saveState();
       openPopup();
+      //saveStats(false);
     }
 
     function updateTimerDisplay() {
@@ -367,6 +371,89 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       localStorage.setItem(`${category}-skippedGuesses`, JSON.stringify(skippedGuesses));
       localStorage.setItem(`${category}-answeredGuesses`, JSON.stringify(answeredGuesses));
     }
+
+    // Load statistics from localStorage
+function loadStats() {
+  // Default stats if none are saved
+  const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+  const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+  const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+  const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || maxStreak;
+  const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
+  
+  // Display the stats (you can update this part with your UI)
+  console.log(`Games Played: ${gamesPlayed}`);
+  console.log(`Games Won: ${gamesWon}`);
+  console.log(`Win Percentage: ${winPercentage}%`);
+  console.log(`Current Streak: ${currentStreak}`);
+  console.log(`Max Streak: ${maxStreak}`);
+}
+
+function saveStats(isWon) {
+  let gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+  let gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+  let currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
+  let maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+
+  // Get today's date and the last played date in the same format
+  const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const savedDate = localStorage.getItem('savedDate'); // Stored date in 'dd-MM-yyyy' format
+
+  // Check if savedDate exists and if today is exactly 1 day after savedDate
+  const isNextDay = savedDate && isNextDayCheck(savedDate, today);
+
+  // Increment games played
+  gamesPlayed += 1;
+
+  // Update streak based on whether it’s the next day and whether the game was won
+  if (isWon) {
+      gamesWon += 1;
+      if (isNextDay) {
+          currentStreak += 1; // Increment streak if it’s the next day
+      } else {
+          currentStreak = 1; // Reset streak if not the next day
+      }
+
+      // Update max streak if necessary
+      if (currentStreak > maxStreak) {
+          maxStreak = currentStreak;
+      }
+  } else {
+      currentStreak = 0; // Reset streak if game is lost
+  }
+
+  // Save today's date as the last played date in 'dd-MM-yyyy' format
+  localStorage.setItem('savedDate', today);
+
+  // Save the updated stats to localStorage
+  localStorage.setItem('gamesPlayed', JSON.stringify(gamesPlayed));
+  localStorage.setItem('gamesWon', JSON.stringify(gamesWon));
+  localStorage.setItem('currentStreak', JSON.stringify(currentStreak));
+  localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
+
+  // Recalculate and save win percentage
+  const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
+  localStorage.setItem('winPercentage', JSON.stringify(winPercentage));
+
+  // Optional: Call a function to update the stats display
+  // loadStats();
+}
+
+// Helper function to check if today is 1 day after savedDate
+function isNextDayCheck(savedDate, today) {
+  const savedDateParts = savedDate.split('-'); // Format: dd-MM-yyyy
+  const todayParts = today.split('-'); // Format: dd-MM-yyyy
+
+  const savedDateObj = new Date(`${savedDateParts[2]}-${savedDateParts[1]}-${savedDateParts[0]}`); // Convert to Date object
+  const todayObj = new Date(`${todayParts[2]}-${todayParts[1]}-${todayParts[0]}`); // Convert to Date object
+
+  // Check if today is exactly 1 day after savedDate
+  const oneDayDifference = todayObj.getTime() - savedDateObj.getTime() === 24 * 60 * 60 * 1000;
+
+  return oneDayDifference;
+}
+
+
 
     if (currentGuess === 0) {
       guessBoxes[0].innerHTML = `

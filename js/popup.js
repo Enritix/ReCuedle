@@ -31,6 +31,28 @@ function setupGeneralPopup(selector) {
     document.querySelector('#kofi-button').addEventListener('click', function () {
       cheersKofiButton();
     });
+  } else if (selector === "stats") {
+    // const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+    // const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+    // const winPercentage = JSON.parse(localStorage.getItem('winPercentage')) || 0;
+    // const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
+    // const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+
+    // generalPopupContent.insertAdjacentHTML('beforeend',
+    //   `<span id="close-general-popup" class="close-btn">&times;</span>
+    //         <h2>Statistics</h2>
+    //         <p>Games Played: ${gamesPlayed}</p>
+    //         <p>Games Won: ${gamesWon}</p>
+    //         <p>Win Percentage: ${winPercentage}%</p>
+    //         <p>Current Streak: ${currentStreak}</p>
+    //         <p>Max Streak: ${maxStreak}</p>
+    //         <canvas id="winChart" width="500" height="500"></canvas>`);
+    // createBarChart(gamesPlayed, gamesWon);
+
+    generalPopupContent.insertAdjacentHTML('beforeend',
+      `<span id="close-general-popup" class="close-btn">&times;</span>
+            <h2>Under construction🚧</h2>
+            <p>Statistics are currently under construction. Please check back later.</p>`);
   }
 
   document.getElementById('close-general-popup').addEventListener('click', closeGeneralPopup);
@@ -57,6 +79,32 @@ function cheersKofiButton() {
                         `, styleSheet.cssRules.length);
 }
 
+function createBarChart(gamesPlayed, gamesWon) {
+  const ctx = document.getElementById('winChart').getContext('2d');
+  new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['Games Played', 'Games Won'],
+          datasets: [{
+              label: 'Win Distribution',
+              data: [gamesPlayed, gamesWon],
+              backgroundColor: ['#4e73df', '#1cc88a'],
+              borderColor: ['#4e73df', '#1cc88a'],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+}
+
+
 document.getElementById('general-popup').addEventListener('click', function (event) {
   if (event.target === document.getElementById('general-popup')) {
     closeGeneralPopup();
@@ -67,6 +115,12 @@ document.getElementById('general-popup').addEventListener('click', function (eve
 document.querySelector('#info').addEventListener('click', function (event) {
   event.preventDefault();
   setupGeneralPopup("info");
+  openGeneralPopup();
+});
+
+document.querySelector('#stats').addEventListener('click', function (event) {
+  event.preventDefault();
+  setupGeneralPopup("stats");
   openGeneralPopup();
 });
 
