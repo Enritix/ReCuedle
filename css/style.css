@@ -103,7 +103,7 @@ main h1 span:nth-child(2) {
     background-color: white;
     padding: 20px;
     text-align: center;
-    width: auto;
+    width: 100%;
     max-width: 500px;
     border-radius: 8px;
 }
