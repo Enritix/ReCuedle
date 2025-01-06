@@ -27,7 +27,7 @@ function setupGeneralPopup(selector) {
             <h2>Support</h2>
             <p>Enjoying ReCuedle? Hosting the website and song database costs money, so support is always highly appreciated☺️</p>
             <a id="kofi-button" href="https://ko-fi.com/enritix" target="_blank">
-            <img src="/assets/images/kofi_symbol.png" alt="Ko-fi logo">Consider buying me a coffee</a>`);
+            <img class="shake" src="/assets/images/kofi_symbol.png" alt="Ko-fi logo">Consider buying me a coffee</a>`);
     document.querySelector('#kofi-button').addEventListener('click', function () {
       cheersKofiButton();
     });
