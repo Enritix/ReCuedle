@@ -116,6 +116,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         localStorage.setItem('savedDate', today);
       }
 
+      scheduleMidnightReload();
+
       loadState();
       // loadStats();
       
@@ -217,6 +219,22 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         popup.style.opacity = 0;
         popup.style.transform = 'translateY(10px)';
       }, 3000);
+    }
+
+    function scheduleMidnightReload() {
+      const now = new Date();
+    
+      const nextMidnight = new Date(now);
+      nextMidnight.setHours(0, 0, 0, 0);
+      nextMidnight.setDate(nextMidnight.getDate() + 1);
+    
+      const timeUntilMidnight = nextMidnight - now;
+    
+      console.log(`Page will reload in ${timeUntilMidnight / 1000} seconds`);
+    
+      setTimeout(() => {
+        window.location.reload();
+      }, timeUntilMidnight);
     }
 
     function onCorrectGuess() {
@@ -831,7 +849,6 @@ function isNextDayCheck(savedDate, today) {
 
       const resultsString = results.join('');
       const finalEmoji = foundCorrectAnswer ? '🎉' : '😞';
-      console.log(resultsString);
       return `ReCuedle - ${categoryElement} - ${date}\n\n${finalEmoji} ${resultsString}\n\n#ReCuedle @ReCuedle https://recuedle.com`;
     }
 
