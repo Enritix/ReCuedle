@@ -25,7 +25,7 @@ function setupGeneralPopup(selector) {
             <h2>Contact</h2>
             <p>Have you any questions/recommendations or did you find a bug? Please contact me @ReCuedle on Twitter or mail me: <a href="mailto:enrico@recuedle.com">enrico@recuedle.com</a></p>
             <h2>Support</h2>
-            <p>Enjoying ReCuedle? Hosting the website and song database costs money, so support is always highly appreciated☺️</p>
+            <p>Loving ReCuedle? Hosting the website and maintaining the song database come with costs, so your support means the world to me!☺️</p>
             <a id="kofi-button" href="https://ko-fi.com/enritix" target="_blank">
             <img class="shake" src="/assets/images/kofi_symbol.png" alt="Ko-fi logo">Consider buying me a coffee</a>`);
     document.querySelector('#kofi-button').addEventListener('click', function () {
