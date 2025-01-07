@@ -188,13 +188,14 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
       widget.getDuration(function (duration) {
         const maxDurationInSeconds = Math.floor(duration / 1000);
+        clearHoldTimer();
 
         holdTimer = setInterval(() => {
           if (elapsedTime < maxDurationInSeconds) {
             elapsedTime++;
             updateTimerDisplay();
           } else {
-            clearInterval(holdTimer);
+            clearHoldTimer();
           }
         }, 1000);
       });
@@ -291,6 +292,13 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     function resetTimer() {
       elapsedTime = 0;
       updateTimerDisplay();
+    }
+
+    function clearHoldTimer() {
+      if (holdTimer) {
+        clearInterval(holdTimer);
+        holdTimer = null;
+      }
     }
 
     function resetButton() {
@@ -560,6 +568,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
       cueCounter = 0;
       btn.innerText = "CUE";
+
+      clearHoldTimer();
 
       widget.pause();
       widget.seekTo(0);
@@ -962,10 +972,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         widget.pause();
         widget.seekTo(0);
 
-        if (holdTimer) {
-          clearInterval(holdTimer);
-          holdTimer = null;
-        }
+        clearHoldTimer();
       }
     });
 
