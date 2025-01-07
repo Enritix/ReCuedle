@@ -4,17 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ReCuedle is a remake of radio.co's Cuedle. It's a daily music game where you have to guess the song of each decade.">
+    <meta name="description"
+        content="ReCuedle is a remake of radio.co's Cuedle. It's a daily music game where you have to guess the song of each decade.">
     <title>ReCuedle - Seventies Essentials</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/category.css">
-    <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/js/semiautomatic.min.js" data-cmp-cdid="729516c0823bb" data-cmp-host="b.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
+    <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/js/semiautomatic.min.js"
+        data-cmp-cdid="729516c0823bb" data-cmp-host="b.delivery.consentmanager.net"
+        data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="0"></script>
     <script src="https://connect.soundcloud.com/sdk/sdk-3.3.2.js"></script>
     <script src="/js/popup.js" defer></script>
     <script type="module" src="/js/script.js"></script>
     <link rel="icon" href="/assets/images/ReCuedle Logo.png" type="image/png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8DJ4L9Y8GB"></script>
     <script>
@@ -25,7 +28,7 @@
         gtag('config', 'G-8DJ4L9Y8GB');
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5170675358965222"
-    crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -34,17 +37,17 @@
             <header>
                 <nav class="navbar">
                     <ul class="nav-links left">
-                      <li><a href="/" id="home"><i class="fas fa-house"></i></a></li>
-                      <li><a href="" id="info"><i class="fas fa-circle-info"></i></a></li>
+                        <li><a href="/" id="home"><i class="fas fa-house"></i></a></li>
+                        <li><a href="" id="info"><i class="fas fa-circle-info"></i></a></li>
                     </ul>
                     <div class="logo">
                         <a href="/"><img id="logo" src="/assets/images/ReCuedle Large Logo.png" alt="Logo"></a>
                     </div>
                     <ul class="nav-links right">
-                      <li><a href="" id="stats"><i class="fas fa-square-poll-vertical"></i></a></li>
-                      <li><a href="" id="contact"><i class="fas fa-envelope"></i></a></li>
+                        <li><a href="" id="stats"><i class="fas fa-square-poll-vertical"></i></a></li>
+                        <li><a href="" id="contact"><i class="fas fa-envelope"></i></a></li>
                     </ul>
-                  </nav>
+                </nav>
             </header>
             <section class="song-container">
                 <div class="timer">
@@ -52,13 +55,18 @@
                     <p>Time: 0:00</p>
                 </div>
                 <div class="cue">
-                    <button id="cue-btn" title="Click to play song">Cue</button>
-                    <a href="/"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+                    <div class="tooltip">
+                        <button id="cue-btn">Cue</button>
+                        <div class="tooltiptext">Click to play song</div>
+                    </div>
+                    <a href="/">
+                        <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
                             text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
                             clip-rule="evenodd" viewBox="0 0 475 511.87">
                             <path
                                 d="M12.07 402.3h450.86c6.64 0 12.07 5.5 12.07 12.07v85.43c0 6.57-5.5 12.07-12.07 12.07H12.07C5.5 511.87 0 506.44 0 499.8v-85.43c0-6.64 5.43-12.07 12.07-12.07zm10.76-60.79c-25.42 0-26.08-16.49-18.12-28.69l216.36-302.4C225.98 3.45 231.69-.02 237.4 0c5.71-.02 11.43 3.45 16.33 10.42l216.36 302.4c7.96 12.2 7.3 28.69-18.12 28.69H22.83z" />
-                        </svg></a>
+                        </svg>
+                    </a>
                 </div>
                 <div class="guess-container">
                     <div class="guess-box"></div>
