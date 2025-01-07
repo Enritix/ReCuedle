@@ -38,38 +38,36 @@ function setupGeneralPopup(selector) {
     const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
     const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
 
-    // Retrieve guessesPerDay data
     const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
 
     generalPopupContent.insertAdjacentHTML('beforeend',
       `<span id="close-general-popup" class="close-btn">&times;</span>
             <h2>Statistics</h2>
             <div class="stats-container">
-  <div class="stats-item">
-    <p class="stats-value">${gamesPlayed}</p>
-    <p class="stats-label">Games Played</p>
-  </div>
-  <div class="stats-item">
-    <p class="stats-value">${gamesWon}</p>
-    <p class="stats-label">Games Won</p>
-  </div>
-  <div class="stats-item">
-    <p class="stats-value">${winPercentage}%</p>
-    <p class="stats-label">Win Percentage</p>
-  </div>
-  <div class="stats-item">
-    <p class="stats-value">${currentStreak}</p>
-    <p class="stats-label">Current Streak</p>
-  </div>
-  <div class="stats-item">
-    <p class="stats-value">${maxStreak}</p>
-    <p class="stats-label">Max Streak</p>
-  </div>
-</div>
+              <div class="stats-item">
+                <p class="stats-value">${gamesPlayed}</p>
+                <p class="stats-label">Games Played</p>
+              </div>
+              <div class="stats-item">
+                <p class="stats-value">${gamesWon}</p>
+                <p class="stats-label">Games Won</p>
+              </div>
+              <div class="stats-item">
+                <p class="stats-value">${winPercentage}%</p>
+                <p class="stats-label">Win Percentage</p>
+              </div>
+              <div class="stats-item">
+                <p class="stats-value">${currentStreak}</p>
+                <p class="stats-label">Current Streak</p>
+              </div>
+              <div class="stats-item">
+                <p class="stats-value">${maxStreak}</p>
+                <p class="stats-label">Max Streak</p>
+              </div>
+            </div>
             <div id="guessDistribution" class="guess-distribution">
             <h3>Guesses</h3></div>`);
 
-    // Pass guessesPerDay to createGuessDistribution
     createGuessDistribution(guessesPerDay);
   }
 
@@ -77,12 +75,10 @@ function setupGeneralPopup(selector) {
 }
 
 function createGuessDistribution(guessesPerDay) {
-  // Calculate the total number of guesses
   const totalGuesses = Object.values(guessesPerDay).reduce((acc, category) => {
     return acc + Object.values(category).length;
   }, 0);
 
-  // Calculate the percentage for each number of guesses
   const guessCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, X: 0 };
   Object.values(guessesPerDay).forEach(category => {
     Object.values(category).forEach(guess => {
@@ -101,7 +97,7 @@ function createGuessDistribution(guessesPerDay) {
   labels.forEach((label, index) => {
     const key = label === 'Failed (X)' ? 'X' : (index + 1).toString();
     const percentage = percentages[index];
-    const count = guessCounts[key]; // Get the count for the current label
+    const count = guessCounts[key];
     const color = colors[index];
     guessDistribution.insertAdjacentHTML('beforeend', `
       <div class="guess-bar">

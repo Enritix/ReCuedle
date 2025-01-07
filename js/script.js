@@ -415,19 +415,15 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       localStorage.setItem(`${category}-answeredGuesses`, JSON.stringify(answeredGuesses));
     }
 
-    // Load statistics from localStorage
     function loadStats() {
-      // Default stats if none are saved
       const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
       const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
       const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
       const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || maxStreak;
       const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
 
-      // Retrieve guessesPerDay data
       const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
 
-      // Calculate the total number of guesses for each category
       const guessCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, X: 0 };
       Object.values(guessesPerDay).forEach(category => {
         Object.values(category).forEach(guess => {
@@ -435,7 +431,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         });
       });
 
-      // Display the stats (you can update this part with your UI)
       console.log(`Games Played: ${gamesPlayed}`);
       console.log(`Games Won: ${gamesWon}`);
       console.log(`Win Percentage: ${winPercentage}%`);
@@ -455,7 +450,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       const category = getCategoryFromFilename();
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     
-      // Retrieve guessesPerDay data
       const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
     
       // Check if the game has already been completed for today
@@ -498,7 +492,6 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       guessesPerDay[category][today] = foundCorrectAnswer ? (currentGuess <= 6 ? currentGuess : 'X') : 'X';
       localStorage.setItem('guessesPerDay', JSON.stringify(guessesPerDay));
     
-      // Update games played, games won, and streaks
       let gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
       let gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
       let currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
