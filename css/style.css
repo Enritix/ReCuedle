@@ -48,7 +48,7 @@ body {
 .nav-links li a {
   text-decoration: none;
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   transition: color 0.3s, transform 0.2s;
 }
 
@@ -379,7 +379,11 @@ main h1 span:nth-child(2) {
   }
 
   .nav-links {
-    gap: 0.75rem;
+    gap: 1rem;
+  }
+
+  .nav-links li a {
+    font-size: 1.5rem;
   }
 
   #logo {
