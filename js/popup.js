@@ -32,30 +32,89 @@ function setupGeneralPopup(selector) {
       cheersKofiButton();
     });
   } else if (selector === "stats") {
-    // const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
-    // const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
-    // const winPercentage = JSON.parse(localStorage.getItem('winPercentage')) || 0;
-    // const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
-    // const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+    const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+    const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+    const winPercentage = JSON.parse(localStorage.getItem('winPercentage')) || 0;
+    const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
+    const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
 
-    // generalPopupContent.insertAdjacentHTML('beforeend',
-    //   `<span id="close-general-popup" class="close-btn">&times;</span>
-    //         <h2>Statistics</h2>
-    //         <p>Games Played: ${gamesPlayed}</p>
-    //         <p>Games Won: ${gamesWon}</p>
-    //         <p>Win Percentage: ${winPercentage}%</p>
-    //         <p>Current Streak: ${currentStreak}</p>
-    //         <p>Max Streak: ${maxStreak}</p>
-    //         <canvas id="winChart" width="500" height="500"></canvas>`);
-    // createBarChart(gamesPlayed, gamesWon);
+    // Retrieve guessesPerDay data
+    const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
 
     generalPopupContent.insertAdjacentHTML('beforeend',
       `<span id="close-general-popup" class="close-btn">&times;</span>
-            <h2>Under construction🚧</h2>
-            <p>Statistics are currently under construction. Please check back later.</p>`);
+            <h2>Statistics</h2>
+            <div class="stats-container">
+  <div class="stats-item">
+    <p class="stats-value">${gamesPlayed}</p>
+    <p class="stats-label">Games Played</p>
+  </div>
+  <div class="stats-item">
+    <p class="stats-value">${gamesWon}</p>
+    <p class="stats-label">Games Won</p>
+  </div>
+  <div class="stats-item">
+    <p class="stats-value">${winPercentage}%</p>
+    <p class="stats-label">Win Percentage</p>
+  </div>
+  <div class="stats-item">
+    <p class="stats-value">${currentStreak}</p>
+    <p class="stats-label">Current Streak</p>
+  </div>
+  <div class="stats-item">
+    <p class="stats-value">${maxStreak}</p>
+    <p class="stats-label">Max Streak</p>
+  </div>
+</div>
+            <div id="guessDistribution" class="guess-distribution">
+            <h3>Guesses</h3></div>`);
+
+    // Pass guessesPerDay to createGuessDistribution
+    createGuessDistribution(guessesPerDay);
   }
 
   document.getElementById('close-general-popup').addEventListener('click', closeGeneralPopup);
+}
+
+function createGuessDistribution(guessesPerDay) {
+  // Calculate the total number of guesses
+  const totalGuesses = Object.values(guessesPerDay).reduce((acc, category) => {
+    return acc + Object.values(category).length;
+  }, 0);
+
+  // Calculate the percentage for each number of guesses
+  const guessCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, X: 0 };
+  Object.values(guessesPerDay).forEach(category => {
+    Object.values(category).forEach(guess => {
+      guessCounts[guess]++;
+    });
+  });
+
+  const percentages = totalGuesses === 0
+    ? Object.keys(guessCounts).map(() => 0)
+    : Object.keys(guessCounts).map(key => (guessCounts[key] / totalGuesses) * 100);
+
+  const guessDistribution = document.getElementById('guessDistribution');
+  const labels = ['1 Guess', '2 Guesses', '3 Guesses', '4 Guesses', '5 Guesses', '6 Guesses', 'Failed (X)'];
+  const colors = ['#1cc88a', '#66c2a5', '#a6d96a', '#fdae61', '#f46d43', '#d73027', '#a50026'];
+
+  labels.forEach((label, index) => {
+    const key = label === 'Failed (X)' ? 'X' : (index + 1).toString();
+    const percentage = percentages[index];
+    const count = guessCounts[key]; // Get the count for the current label
+    const color = colors[index];
+    guessDistribution.insertAdjacentHTML('beforeend', `
+      <div class="guess-bar">
+        <span>${label}</span>
+        <div class="bar-container">
+          <div class="bar" style="width: ${percentage}%; background-color: ${color};">
+            <span class="count">${count}</span>
+          </div>
+        </div>
+        <span class="percentage">${percentage.toFixed(2)}%</span>
+      </div>
+    `);
+  });
 }
 
 function cheersKofiButton() {
@@ -79,38 +138,11 @@ function cheersKofiButton() {
                         `, styleSheet.cssRules.length);
 }
 
-function createBarChart(gamesPlayed, gamesWon) {
-  const ctx = document.getElementById('winChart').getContext('2d');
-  new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: ['Games Played', 'Games Won'],
-          datasets: [{
-              label: 'Win Distribution',
-              data: [gamesPlayed, gamesWon],
-              backgroundColor: ['#4e73df', '#1cc88a'],
-              borderColor: ['#4e73df', '#1cc88a'],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          responsive: true,
-          scales: {
-              y: {
-                  beginAtZero: true
-              }
-          }
-      }
-  });
-}
-
-
 document.getElementById('general-popup').addEventListener('click', function (event) {
   if (event.target === document.getElementById('general-popup')) {
     closeGeneralPopup();
   }
 });
-
 
 document.querySelector('#info').addEventListener('click', function (event) {
   event.preventDefault();

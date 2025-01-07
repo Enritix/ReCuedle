@@ -112,15 +112,32 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       const savedDate = localStorage.getItem('savedDate');
 
       if (savedDate !== today) {
-        localStorage.clear();
+        localStorage.removeItem('seventies-currentGuess');
+        localStorage.removeItem('seventies-skippedGuesses');
+        localStorage.removeItem('seventies-answeredGuesses');
+        localStorage.removeItem('eighties-currentGuess');
+        localStorage.removeItem('eighties-skippedGuesses');
+        localStorage.removeItem('eighties-answeredGuesses');
+        localStorage.removeItem('nineties-currentGuess');
+        localStorage.removeItem('nineties-skippedGuesses');
+        localStorage.removeItem('nineties-answeredGuesses');
+        localStorage.removeItem('zeroes-currentGuess');
+        localStorage.removeItem('zeroes-skippedGuesses');
+        localStorage.removeItem('zeroes-answeredGuesses');
+        localStorage.removeItem('2010s-currentGuess');
+        localStorage.removeItem('2010s-skippedGuesses');
+        localStorage.removeItem('2010s-answeredGuesses');
+        localStorage.removeItem('2020s-currentGuess');
+        localStorage.removeItem('2020s-skippedGuesses');
+        localStorage.removeItem('2020s-answeredGuesses');
         localStorage.setItem('savedDate', today);
       }
 
       scheduleMidnightReload();
 
       loadState();
-      // loadStats();
-      
+      loadStats();
+
       // if (!document.cookie.includes(`cookies_accepted=true`)) {
       //   openWarning();
       // } else {
@@ -223,15 +240,15 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
     function scheduleMidnightReload() {
       const now = new Date();
-    
+
       const nextMidnight = new Date(now);
       nextMidnight.setHours(0, 0, 0, 0);
       nextMidnight.setDate(nextMidnight.getDate() + 1);
-    
+
       const timeUntilMidnight = nextMidnight - now;
-    
+
       console.log(`Page will reload in ${timeUntilMidnight / 1000} seconds`);
-    
+
       setTimeout(() => {
         window.location.reload();
       }, timeUntilMidnight);
@@ -253,7 +270,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       btn.disabled = true;
       btn.classList.add("disabled-btn");
       openPopup();
-      //saveStats(true);
+      saveStats();
     }
 
     function onLastWrongGuess() {
@@ -262,7 +279,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
             <p>Better luck next time! The song was:</p>`);
       saveState();
       openPopup();
-      //saveStats(false);
+      saveStats();
     }
 
     function updateTimerDisplay() {
@@ -391,87 +408,130 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     }
 
     // Load statistics from localStorage
-function loadStats() {
-  // Default stats if none are saved
-  const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
-  const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
-  const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
-  const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || maxStreak;
-  const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
-  
-  // Display the stats (you can update this part with your UI)
-  console.log(`Games Played: ${gamesPlayed}`);
-  console.log(`Games Won: ${gamesWon}`);
-  console.log(`Win Percentage: ${winPercentage}%`);
-  console.log(`Current Streak: ${currentStreak}`);
-  console.log(`Max Streak: ${maxStreak}`);
-}
+    function loadStats() {
+      // Default stats if none are saved
+      const gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+      const gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+      const maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+      const currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || maxStreak;
+      const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
 
-function saveStats(isWon) {
-  let gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
-  let gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
-  let currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
-  let maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+      // Retrieve guessesPerDay data
+      const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
 
-  // Get today's date and the last played date in the same format
-  const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const savedDate = localStorage.getItem('savedDate'); // Stored date in 'dd-MM-yyyy' format
+      // Calculate the total number of guesses for each category
+      const guessCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, X: 0 };
+      Object.values(guessesPerDay).forEach(category => {
+        Object.values(category).forEach(guess => {
+          guessCounts[guess]++;
+        });
+      });
 
-  // Check if savedDate exists and if today is exactly 1 day after savedDate
-  const isNextDay = savedDate && isNextDayCheck(savedDate, today);
+      // Display the stats (you can update this part with your UI)
+      console.log(`Games Played: ${gamesPlayed}`);
+      console.log(`Games Won: ${gamesWon}`);
+      console.log(`Win Percentage: ${winPercentage}%`);
+      console.log(`Current Streak: ${currentStreak}`);
+      console.log(`Max Streak: ${maxStreak}`);
+      console.log(`Guess Distribution:`);
+      console.log(`1 Guess: ${guessCounts[1]}`);
+      console.log(`2 Guesses: ${guessCounts[2]}`);
+      console.log(`3 Guesses: ${guessCounts[3]}`);
+      console.log(`4 Guesses: ${guessCounts[4]}`);
+      console.log(`5 Guesses: ${guessCounts[5]}`);
+      console.log(`6 Guesses: ${guessCounts[6]}`);
+      console.log(`Failed (X): ${guessCounts.X}`);
+    }
 
-  // Increment games played
-  gamesPlayed += 1;
-
-  // Update streak based on whether it’s the next day and whether the game was won
-  if (isWon) {
-      gamesWon += 1;
-      if (isNextDay) {
-          currentStreak += 1; // Increment streak if it’s the next day
-      } else {
-          currentStreak = 1; // Reset streak if not the next day
+        function saveStats() {
+      const category = getCategoryFromFilename();
+      const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    
+      // Retrieve guessesPerDay data
+      const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
+    
+      // Check if the game has already been completed for today
+      if (guessesPerDay[category] && guessesPerDay[category][today]) {
+        return;
       }
-
-      // Update max streak if necessary
-      if (currentStreak > maxStreak) {
+    
+      localStorage.setItem(`${category}-currentGuess`, currentGuess);
+    
+      const skippedGuesses = [];
+      const answeredGuesses = [];
+      let foundCorrectAnswer = false;
+    
+      for (let i = 0; i < currentGuess; i++) {
+        if (guessBoxes[i].innerHTML.includes("SKIP")) {
+          skippedGuesses.push({ id: `skip-${i}`, index: i }); // Track skipped guesses
+        } else {
+          const span = guessBoxes[i].querySelector('span');
+          const guessContent = span ? span.textContent.trim() : guessBoxes[i].textContent.trim();
+          const isCorrect = guessContent.includes('✅');
+          answeredGuesses.push({
+            id: `answered-${i}`,
+            guess: guessContent.replace('✅', '').replace('❌', '').trim(),
+            correct: isCorrect
+          });
+          if (isCorrect) {
+            foundCorrectAnswer = true;
+          }
+        }
+      }
+    
+      localStorage.setItem(`${category}-skippedGuesses`, JSON.stringify(skippedGuesses));
+      localStorage.setItem(`${category}-answeredGuesses`, JSON.stringify(answeredGuesses));
+    
+      // Save the number of guesses it took per category per day
+      if (!guessesPerDay[category]) {
+        guessesPerDay[category] = {};
+      }
+    
+      guessesPerDay[category][today] = foundCorrectAnswer ? (currentGuess <= 6 ? currentGuess : 'X') : 'X';
+      localStorage.setItem('guessesPerDay', JSON.stringify(guessesPerDay));
+    
+      // Update games played, games won, and streaks
+      let gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
+      let gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
+      let currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
+      let maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
+      const lastPlayedDate = localStorage.getItem('lastPlayedDate');
+    
+      gamesPlayed++;
+      if (foundCorrectAnswer) {
+        gamesWon++;
+        if (lastPlayedDate) {
+          const lastDate = new Date(lastPlayedDate);
+          const currentDate = new Date(today);
+          const timeDiff = currentDate.getTime() - lastDate.getTime();
+          const dayDiff = timeDiff / (1000 * 3600 * 24);
+    
+          if (dayDiff === 1) {
+            currentStreak++;
+          } else {
+            currentStreak = 1;
+          }
+        } else {
+          currentStreak = 1;
+        }
+    
+        if (currentStreak > maxStreak) {
           maxStreak = currentStreak;
+        }
+      } else {
+        currentStreak = 0;
       }
-  } else {
-      currentStreak = 0; // Reset streak if game is lost
-  }
-
-  // Save today's date as the last played date in 'dd-MM-yyyy' format
-  localStorage.setItem('savedDate', today);
-
-  // Save the updated stats to localStorage
-  localStorage.setItem('gamesPlayed', JSON.stringify(gamesPlayed));
-  localStorage.setItem('gamesWon', JSON.stringify(gamesWon));
-  localStorage.setItem('currentStreak', JSON.stringify(currentStreak));
-  localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
-
-  // Recalculate and save win percentage
-  const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
-  localStorage.setItem('winPercentage', JSON.stringify(winPercentage));
-
-  // Optional: Call a function to update the stats display
-  // loadStats();
-}
-
-// Helper function to check if today is 1 day after savedDate
-function isNextDayCheck(savedDate, today) {
-  const savedDateParts = savedDate.split('-'); // Format: dd-MM-yyyy
-  const todayParts = today.split('-'); // Format: dd-MM-yyyy
-
-  const savedDateObj = new Date(`${savedDateParts[2]}-${savedDateParts[1]}-${savedDateParts[0]}`); // Convert to Date object
-  const todayObj = new Date(`${todayParts[2]}-${todayParts[1]}-${todayParts[0]}`); // Convert to Date object
-
-  // Check if today is exactly 1 day after savedDate
-  const oneDayDifference = todayObj.getTime() - savedDateObj.getTime() === 24 * 60 * 60 * 1000;
-
-  return oneDayDifference;
-}
-
-
+    
+      const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
+    
+      localStorage.setItem('gamesPlayed', JSON.stringify(gamesPlayed));
+      localStorage.setItem('gamesWon', JSON.stringify(gamesWon));
+      localStorage.setItem('winPercentage', JSON.stringify(winPercentage));
+      localStorage.setItem('currentStreak', JSON.stringify(currentStreak));
+      localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
+      localStorage.setItem('lastPlayedDate', today);
+      console.log(currentStreak);
+    }
 
     if (currentGuess === 0) {
       guessBoxes[0].innerHTML = `
@@ -801,7 +861,7 @@ function isNextDayCheck(savedDate, today) {
           saveState();
         }
 
-        if (currentGuess === guessBoxes.length) {
+        if (currentGuess === guessBoxes.length && !isCorrect) {
           btn.disabled = true;
           btn.classList.add('disabled-btn');
           onLastWrongGuess();
