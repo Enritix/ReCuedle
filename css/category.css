@@ -76,11 +76,12 @@
     width: 80px;
     height: 80px;
     margin: 10px;
-    box-shadow:  rgba(188, 188, 230, 0.8) 0px 10px 3px 0.8px;
+    box-shadow: rgb(93, 93, 99) -4px 2px 0px 5px, inset rgba(100, 100, 111, 0.8) 0px 0px 3px 0.5px;
 }
 
-.cue a:hover {
-    background-color: rgb(55, 54, 54);
+.cue a:active {
+    box-shadow: rgb(93, 93, 99) -2px 2px 0px 3px, inset rgba(100, 100, 111, 0.8) 0px 0px 3px 0.5px;
+    transform: translateX(-5px);
 }
 
 .cue a svg {
