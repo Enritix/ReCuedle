@@ -145,36 +145,39 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       // }
 
       async function loadSoundCloudEmbed() {
-
         const category = getCategoryFromFilename();
+        let currentDate = new Date(today.split('-').reverse().join('-'));
 
         try {
-          const snapshot = await get(ref(database, `/dailySong/${today}/${category}`));
-          if (snapshot.exists()) {
-            const song = snapshot.val();
+          while (true) {
+            const formattedDate = currentDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const snapshot = await get(ref(database, `/dailySong/${formattedDate}/${category}`));
 
-            // Create the iframe element dynamically
-            const iframe = document.querySelector("iframe");
-            iframe.width = "100%";
-            iframe.height = "166";
-            iframe.scrolling = "no";
-            iframe.frameborder = "no";
-            iframe.allow = "autoplay";
-            iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
+            if (snapshot.exists()) {
+              const song = snapshot.val();
 
-            // Update the song info
-            const songInfoElement = document.querySelector('.song-info');
-            if (songInfoElement) {
-              songInfoElement.textContent = `${song.title} - ${song.artist}`;
+              const iframe = document.querySelector("iframe");
+              iframe.width = "100%";
+              iframe.height = "166";
+              iframe.scrolling = "no";
+              iframe.frameborder = "no";
+              iframe.allow = "autoplay";
+              iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
+
+              const songInfoElement = document.querySelector('.song-info');
+              if (songInfoElement) {
+                songInfoElement.textContent = `${song.title} - ${song.artist}`;
+              }
+              return;
             }
-          } else {
-            console.error('No song data found for the current category and date.');
+
+            console.error(`No song data found for ${formattedDate}, checking previous day...`);
+            currentDate.setDate(currentDate.getDate() - 1);
           }
         } catch (error) {
           console.error('Error fetching song data:', error);
         }
       }
-
     }
 
     const iframeElement = document.querySelector("iframe");
@@ -446,23 +449,23 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       console.log(`Failed (X): ${guessCounts.X}`);
     }
 
-        function saveStats() {
+    function saveStats() {
       const category = getCategoryFromFilename();
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    
+
       const guessesPerDay = JSON.parse(localStorage.getItem('guessesPerDay')) || {};
-    
+
       // Check if the game has already been completed for today
       if (guessesPerDay[category] && guessesPerDay[category][today]) {
         return;
       }
-    
+
       localStorage.setItem(`${category}-currentGuess`, currentGuess);
-    
+
       const skippedGuesses = [];
       const answeredGuesses = [];
       let foundCorrectAnswer = false;
-    
+
       for (let i = 0; i < currentGuess; i++) {
         if (guessBoxes[i].innerHTML.includes("SKIP")) {
           skippedGuesses.push({ id: `skip-${i}`, index: i }); // Track skipped guesses
@@ -480,24 +483,24 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
           }
         }
       }
-    
+
       localStorage.setItem(`${category}-skippedGuesses`, JSON.stringify(skippedGuesses));
       localStorage.setItem(`${category}-answeredGuesses`, JSON.stringify(answeredGuesses));
-    
+
       // Save the number of guesses it took per category per day
       if (!guessesPerDay[category]) {
         guessesPerDay[category] = {};
       }
-    
+
       guessesPerDay[category][today] = foundCorrectAnswer ? (currentGuess <= 6 ? currentGuess : 'X') : 'X';
       localStorage.setItem('guessesPerDay', JSON.stringify(guessesPerDay));
-    
+
       let gamesPlayed = JSON.parse(localStorage.getItem('gamesPlayed')) || 0;
       let gamesWon = JSON.parse(localStorage.getItem('gamesWon')) || 0;
       let currentStreak = JSON.parse(localStorage.getItem('currentStreak')) || 0;
       let maxStreak = JSON.parse(localStorage.getItem('maxStreak')) || 0;
       const lastPlayedDate = localStorage.getItem('lastPlayedDate');
-    
+
       gamesPlayed++;
       if (foundCorrectAnswer) {
         gamesWon++;
@@ -506,7 +509,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
           const currentDate = new Date(today);
           const timeDiff = currentDate.getTime() - lastDate.getTime();
           const dayDiff = timeDiff / (1000 * 3600 * 24);
-    
+
           if (dayDiff === 1) {
             currentStreak++;
           } else {
@@ -515,16 +518,16 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         } else {
           currentStreak = 1;
         }
-    
+
         if (currentStreak > maxStreak) {
           maxStreak = currentStreak;
         }
       } else {
         currentStreak = 0;
       }
-    
+
       const winPercentage = gamesPlayed === 0 ? 0 : ((gamesWon / gamesPlayed) * 100).toFixed(2);
-    
+
       localStorage.setItem('gamesPlayed', JSON.stringify(gamesPlayed));
       localStorage.setItem('gamesWon', JSON.stringify(gamesWon));
       localStorage.setItem('winPercentage', JSON.stringify(winPercentage));
@@ -700,14 +703,20 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     async function fetchSongs(category) {
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+      let currentDate = new Date(today.split('-').reverse().join('-'));
+
       try {
-        const snapshot = await get(ref(database, `/dailySong/${today}/${category}`));
-        if (snapshot.exists()) {
-          const song = snapshot.val();
-          return [song]; // Return as an array for compatibility with search logic
-        } else {
-          console.error(`No songs found for ${category} on ${today}`);
-          return [];
+        while (true) {
+          const formattedDate = currentDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const snapshot = await get(ref(database, `/dailySong/${formattedDate}/${category}`));
+
+          if (snapshot.exists()) {
+            const song = snapshot.val();
+            return [song];
+          }
+
+          console.error(`No songs found for ${category} on ${formattedDate}, checking previous day...`);
+          currentDate.setDate(currentDate.getDate() - 1);
         }
       } catch (error) {
         console.error('Error fetching songs from Firebase:', error);
