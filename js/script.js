@@ -15,6 +15,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     const guessBoxes = document.querySelectorAll(".guess-box");
     let currentGuess = 0;
     let cueCounter = 0;
+    let selectedDailyDate = null;
 
     let holdTimer = null;
     let elapsedTime = 0;
@@ -110,6 +111,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
       const savedDate = localStorage.getItem('savedDate');
+      selectedDailyDate = today;
 
       if (savedDate !== today) {
         localStorage.removeItem('seventies-currentGuess');
@@ -146,12 +148,12 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
       async function loadSoundCloudEmbed() {
         const category = getCategoryFromFilename();
-        const todayDate = new Date(today.split('-').reverse().join('-'));
-        const formattedToday = todayDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        // use the centrally selected date (may be today's or a random one set below)
+        const dateToUse = selectedDailyDate;
 
         try {
-          // Try to load today's song first
-          const todaySnapshot = await get(ref(database, `/dailySong/${formattedToday}/${category}`));
+          // Try the selected date first
+          const todaySnapshot = await get(ref(database, `/dailySong/${dateToUse}/${category}`));
           if (todaySnapshot.exists()) {
             const song = todaySnapshot.val();
             const iframe = document.querySelector("iframe");
@@ -169,7 +171,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
             return;
           }
 
-          // If no song for today, gather all dates that have an entry for this category and pick one at random
+          // If selected date had no song, gather all dates that have an entry for this category and pick one at random
           const allSnapshot = await get(ref(database, `/dailySong`));
           if (!allSnapshot.exists()) {
             console.error('No dailySong entries found in database');
@@ -189,6 +191,8 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
           }
 
           const randomDate = availableDates[Math.floor(Math.random() * availableDates.length)];
+          selectedDailyDate = randomDate; // <-- set central date so fetchSongs and other logic use same date
+
           const randomSnapshot = await get(ref(database, `/dailySong/${randomDate}/${category}`));
           if (randomSnapshot.exists()) {
             const song = randomSnapshot.val();
@@ -737,16 +741,17 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     }
 
     async function fetchSongs(category) {
-      const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      // prefer the centrally selected date if set
+      const dateToUse = selectedDailyDate || new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
       try {
-        // Try today's entry first
-        const todaySnapshot = await get(ref(database, `/dailySong/${today}/${category}`));
-        if (todaySnapshot.exists()) {
-          return [todaySnapshot.val()];
+        // Try the selected date first
+        const snapshot = await get(ref(database, `/dailySong/${dateToUse}/${category}`));
+        if (snapshot.exists()) {
+          return [snapshot.val()];
         }
 
-        // If no song for today, fetch all dates and pick a random available date for the category
+        // If no song for the selected date, fetch all dates and pick a random available date for the category
         const allSnapshot = await get(ref(database, `/dailySong`));
         if (!allSnapshot.exists()) {
           console.error('No dailySong entries found in database');
@@ -766,6 +771,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
         }
 
         const randomDate = availableDates[Math.floor(Math.random() * availableDates.length)];
+        selectedDailyDate = randomDate; // ensure central date matches selection
         const randomSnapshot = await get(ref(database, `/dailySong/${randomDate}/${category}`));
         if (randomSnapshot.exists()) {
           return [randomSnapshot.val()];
