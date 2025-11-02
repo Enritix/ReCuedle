@@ -146,34 +146,70 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
 
       async function loadSoundCloudEmbed() {
         const category = getCategoryFromFilename();
-        let currentDate = new Date(today.split('-').reverse().join('-'));
+        const todayDate = new Date(today.split('-').reverse().join('-'));
+        const formattedToday = todayDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
         try {
-          while (true) {
-            const formattedDate = currentDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const snapshot = await get(ref(database, `/dailySong/${formattedDate}/${category}`));
+          // Try to load today's song first
+          const todaySnapshot = await get(ref(database, `/dailySong/${formattedToday}/${category}`));
+          if (todaySnapshot.exists()) {
+            const song = todaySnapshot.val();
+            const iframe = document.querySelector("iframe");
+            iframe.width = "100%";
+            iframe.height = "166";
+            iframe.scrolling = "no";
+            iframe.frameborder = "no";
+            iframe.allow = "autoplay";
+            iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
 
-            if (snapshot.exists()) {
-              const song = snapshot.val();
+            const songInfoElement = document.querySelector('.song-info');
+            if (songInfoElement) {
+              songInfoElement.textContent = `${song.title} - ${song.artist}`;
+            }
+            return;
+          }
 
-              const iframe = document.querySelector("iframe");
-              iframe.width = "100%";
-              iframe.height = "166";
-              iframe.scrolling = "no";
-              iframe.frameborder = "no";
-              iframe.allow = "autoplay";
-              iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
+          // If no song for today, gather all dates that have an entry for this category and pick one at random
+          const allSnapshot = await get(ref(database, `/dailySong`));
+          if (!allSnapshot.exists()) {
+            console.error('No dailySong entries found in database');
+            return;
+          }
 
-              const songInfoElement = document.querySelector('.song-info');
-              if (songInfoElement) {
-                songInfoElement.textContent = `${song.title} - ${song.artist}`;
-              }
-              return;
+          const availableDates = [];
+          allSnapshot.forEach(dateSnap => {
+            if (dateSnap.child(category).exists()) {
+              availableDates.push(dateSnap.key);
+            }
+          });
+
+          if (availableDates.length === 0) {
+            console.error(`No songs found for category "${category}" on any date`);
+            return;
+          }
+
+          const randomDate = availableDates[Math.floor(Math.random() * availableDates.length)];
+          const randomSnapshot = await get(ref(database, `/dailySong/${randomDate}/${category}`));
+          if (randomSnapshot.exists()) {
+            const song = randomSnapshot.val();
+            const iframe = document.querySelector("iframe");
+            iframe.width = "100%";
+            iframe.height = "166";
+            iframe.scrolling = "no";
+            iframe.frameborder = "no";
+            iframe.allow = "autoplay";
+            iframe.src = `https://w.soundcloud.com/player/?url=${decodeURIComponent(song.soundcloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&hide_title=true&hide_artwork=false&visual=false&buying=false&liking=false&sharing=false&download=false`;
+
+            const songInfoElement = document.querySelector('.song-info');
+            if (songInfoElement) {
+              songInfoElement.textContent = `${song.title} - ${song.artist}`;
             }
 
-            console.error(`No song data found for ${formattedDate}, checking previous day...`);
-            currentDate.setDate(currentDate.getDate() - 1);
+            console.log(`Loaded song for category "${category}" from random date: ${randomDate}`);
+            return;
           }
+
+          console.error('Could not load a song even after selecting a random available date.');
         } catch (error) {
           console.error('Error fetching song data:', error);
         }
@@ -703,21 +739,40 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2
     async function fetchSongs(category) {
       const today = new Date().toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-      let currentDate = new Date(today.split('-').reverse().join('-'));
-
       try {
-        while (true) {
-          const formattedDate = currentDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          const snapshot = await get(ref(database, `/dailySong/${formattedDate}/${category}`));
-
-          if (snapshot.exists()) {
-            const song = snapshot.val();
-            return [song];
-          }
-
-          console.error(`No songs found for ${category} on ${formattedDate}, checking previous day...`);
-          currentDate.setDate(currentDate.getDate() - 1);
+        // Try today's entry first
+        const todaySnapshot = await get(ref(database, `/dailySong/${today}/${category}`));
+        if (todaySnapshot.exists()) {
+          return [todaySnapshot.val()];
         }
+
+        // If no song for today, fetch all dates and pick a random available date for the category
+        const allSnapshot = await get(ref(database, `/dailySong`));
+        if (!allSnapshot.exists()) {
+          console.error('No dailySong entries found in database');
+          return [];
+        }
+
+        const availableDates = [];
+        allSnapshot.forEach(dateSnap => {
+          if (dateSnap.child(category).exists()) {
+            availableDates.push(dateSnap.key);
+          }
+        });
+
+        if (availableDates.length === 0) {
+          console.error(`No songs found for category "${category}" on any date`);
+          return [];
+        }
+
+        const randomDate = availableDates[Math.floor(Math.random() * availableDates.length)];
+        const randomSnapshot = await get(ref(database, `/dailySong/${randomDate}/${category}`));
+        if (randomSnapshot.exists()) {
+          return [randomSnapshot.val()];
+        }
+
+        console.error('No song found for the selected random date (unexpected).');
+        return [];
       } catch (error) {
         console.error('Error fetching songs from Firebase:', error);
         return [];
